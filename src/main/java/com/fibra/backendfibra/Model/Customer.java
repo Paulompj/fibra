@@ -1,0 +1,41 @@
+package com.fibra.backendfibra.Model;
+
+import jakarta.persistence.*;
+import jakarta.validation.constraints.*;
+import lombok.Getter;
+import lombok.Setter;
+
+@Entity
+@Table(name = "customers")
+@Getter
+@Setter
+public class Customer {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @NotBlank(message = "Nome completo é obrigatório")
+    @Size(max = 100)
+    @Column(name = "full_name", nullable = false)
+    private String fullName;
+
+    @NotBlank(message = "Telefone é obrigatório")
+    @Size(max = 15)
+    private String phone;
+
+    @Min(0)
+    @Max(150)
+    private Integer age;
+
+    @Size(max = 100)
+    private String address;
+
+    @Size(max = 200)
+    @Column(name = "photo_url")
+    private String photoUrl;
+
+    @ManyToOne
+    @JoinColumn(name = "customer_type", nullable = false)
+    private CustomerType customerType;
+}
