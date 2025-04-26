@@ -1,6 +1,7 @@
 package com.fibra.backendfibra.Controller;
 
 import com.fibra.backendfibra.Model.Customer;
+import com.fibra.backendfibra.Model.CustomerType;
 import com.fibra.backendfibra.Service.CustomerService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,5 +40,15 @@ public class CustomerController {
     public ResponseEntity<Void> deleteCustomer(@PathVariable Long id) {
         customerService.delete(id);
         return ResponseEntity.noContent().build();
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<Customer> update(@PathVariable Long id, @RequestBody Customer customer) {
+        try {
+            Customer updated = customerService.update(id, customer);
+            return ResponseEntity.ok(updated);
+        } catch (RuntimeException e) {
+            return ResponseEntity.notFound().build();
+        }
     }
 }

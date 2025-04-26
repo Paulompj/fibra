@@ -40,4 +40,14 @@ public class CustomerTypeController {
         }
         return ResponseEntity.notFound().build();
     }
+    @PutMapping("/{id}")
+    public ResponseEntity<CustomerType> update(@PathVariable Long id, @RequestBody CustomerType customerType) {
+        try {
+            CustomerType updated = service.update(id, customerType);
+            return ResponseEntity.ok(updated);
+        } catch (RuntimeException e) {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
 }

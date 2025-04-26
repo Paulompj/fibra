@@ -29,4 +29,14 @@ public class CustomerTypeService {
     public void deleteById(Long id) {
         repository.deleteById(id);
     }
+
+    public CustomerType update(Long id, CustomerType customerType) {
+        return repository.findById(id)
+                .map(existingCustomerType -> {
+                    existingCustomerType.setName(customerType.getName());
+                    return repository.save(existingCustomerType);
+                })
+                .orElseThrow(() -> new RuntimeException("CustomerType not found with id " + id));
+    }
+
 }

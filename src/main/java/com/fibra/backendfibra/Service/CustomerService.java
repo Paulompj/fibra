@@ -29,4 +29,18 @@ public class CustomerService {
     public void delete(Long id) {
         customerRepository.deleteById(id);
     }
+    public Customer update(Long id, Customer customer) {
+        return customerRepository.findById(id)
+                .map(existingCustomer -> {
+                    existingCustomer.setFullName(customer.getFullName());
+                    existingCustomer.setCustomerType(customer.getCustomerType());
+                    existingCustomer.setAge(customer.getAge());
+                    existingCustomer.setPhone(customer.getPhone());
+                    existingCustomer.setAddress(customer.getAddress());
+                    existingCustomer.setPhotoUrl(customer.getPhotoUrl());
+                    return customerRepository.save(existingCustomer);
+                })
+                .orElseThrow(() -> new RuntimeException("CustomerType not found with id " + id));
+    }
+
 }
