@@ -15,6 +15,7 @@ public class Customer {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+
     @NotBlank(message = "Nome completo é obrigatório")
     @Size(max = 100)
     @Column(name = "full_name", nullable = false)
