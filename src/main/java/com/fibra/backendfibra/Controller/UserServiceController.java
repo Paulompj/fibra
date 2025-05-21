@@ -1,5 +1,6 @@
 package com.fibra.backendfibra.Controller;
 
+import com.fibra.backendfibra.Model.User;
 import com.fibra.backendfibra.Model.UserService;
 import com.fibra.backendfibra.Repository.UserServiceRepository;
 import com.fibra.backendfibra.Service.UserServiceService;
@@ -45,6 +46,10 @@ public class UserServiceController {
     @GetMapping
     public List<UserService> getAllUserServices() {
         return userServiceService.findAll();
+    }
+    @GetMapping("/services/{serviceId}/users")
+    public List<User> getUsersByServiceId(@PathVariable Long serviceId) {
+        return userServiceService.getUsersByServiceId(serviceId);
     }
 
 }

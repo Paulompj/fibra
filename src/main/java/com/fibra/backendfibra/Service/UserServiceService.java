@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class UserServiceService {
@@ -33,5 +34,12 @@ public class UserServiceService {
     public List<UserService> findAll() {
         return userServiceRepository.findAll();
     }
+    public List<User> getUsersByServiceId(Long serviceId) {
+        return userServiceRepository.findByServiceId(serviceId)
+                .stream()
+                .map(UserService::getUser)
+                .collect(Collectors.toList());
+    }
+
 
 }
