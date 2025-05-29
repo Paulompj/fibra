@@ -1,10 +1,13 @@
 package com.fibra.backendfibra.Controller;
 
+import com.fibra.backendfibra.DTO.ServiceWithUsersRequest;
 import com.fibra.backendfibra.Model.ServiceEntity;
 import com.fibra.backendfibra.Service.ServiceEntityService;
+import com.fibra.backendfibra.Service.UserServiceService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import java.util.List;
 
 @RestController
@@ -12,14 +15,16 @@ import java.util.List;
 public class ServiceEntityController {
 
     private final ServiceEntityService service;
+    private final UserServiceService userServiceService;
 
-    public ServiceEntityController(ServiceEntityService service) {
+    public ServiceEntityController(ServiceEntityService service, UserServiceService userServiceService) {
         this.service = service;
+        this.userServiceService = userServiceService;
     }
 
     @GetMapping
-    public List<ServiceEntity> getAll() {
-        return service.findAll();
+    public Page<ServiceEntity> getAll(Pageable pageable) {
+        return service.findAll(pageable);
     }
 
     @GetMapping("/{id}")
@@ -32,6 +37,12 @@ public class ServiceEntityController {
     @PostMapping
     public ServiceEntity create(@RequestBody ServiceEntity serviceEntity) {
         return service.save(serviceEntity);
+    }
+
+    @PostMapping("/with-users")
+    public ResponseEntity<ServiceEntity> createWithUsers(@RequestBody ServiceWithUsersRequest request) {
+        ServiceEntity savedService = service.createServiceWithUsers(request);
+        return ResponseEntity.ok(savedService);
     }
 
     @DeleteMapping("/{id}")
