@@ -7,5 +7,6 @@ import java.util.List;
 
 public interface UserServiceRepository extends JpaRepository<UserService, Long> {
     List<UserService> findByServiceId(Long serviceId);
+    UserService findByUserIdAndServiceId(Long userId, Long serviceId);
 
 }
