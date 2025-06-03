@@ -31,15 +31,25 @@ public class UserServiceService {
         UserService userService = new UserService(user, service);
         return userServiceRepository.save(userService);
     }
+
+    public List<UserService> createUserServices(List<Long> userIds, Long serviceId) {
+        ServiceEntity service = serviceRepository.findById(Math.toIntExact(serviceId)).orElseThrow(() -> new RuntimeException("Serviço não encontrado"));
+        return userIds.stream().map(userId -> {
+            User user = userRepository.findById(Math.toIntExact(userId)).orElseThrow(() -> new RuntimeException("Usuário não encontrado: " + userId));
+            UserService userService = new UserService(user, service);
+            return userServiceRepository.save(userService);
+        }).collect(Collectors.toList());
+    }
+
     public List<UserService> findAll() {
         return userServiceRepository.findAll();
     }
+
     public List<User> getUsersByServiceId(Long serviceId) {
         return userServiceRepository.findByServiceId(serviceId)
                 .stream()
                 .map(UserService::getUser)
                 .collect(Collectors.toList());
     }
-
 
 }

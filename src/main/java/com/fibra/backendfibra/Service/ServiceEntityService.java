@@ -24,7 +24,9 @@ public class ServiceEntityService {
     public Page<ServiceEntity> findAll(Pageable pageable) {
         return repository.findAll(pageable);
     }
-
+    public List<ServiceEntity> findAllServices() {
+        return repository.findAll();
+    }
     public Optional<ServiceEntity> findById(Integer id) {
         return repository.findById(id);
     }

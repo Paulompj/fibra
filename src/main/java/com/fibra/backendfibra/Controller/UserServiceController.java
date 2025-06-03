@@ -16,23 +16,23 @@ public class UserServiceController {
     @Autowired
     private UserServiceService userServiceService;
     private UserServiceRepository userServiceRepository;
-    @PostMapping
-    public UserService createUserService(@RequestBody UserServiceRequest request) {
-        return userServiceService.createUserService(request.getUserId(), request.getServiceId());
-    }
 
+    @PostMapping
+    public List<UserService> createUserServices(@RequestBody UserServiceRequest request) {
+        return userServiceService.createUserServices(request.getUserIds(), request.getServiceId());
+    }
 
     // Classe DTO interna para o request
     public static class UserServiceRequest {
-        private Long userId;
+        private List<Long> userIds;
         private Long serviceId;
 
-        public Long getUserId() {
-            return userId;
+        public List<Long> getUserIds() {
+            return userIds;
         }
 
-        public void setUserId(Long userId) {
-            this.userId = userId;
+        public void setUserIds(List<Long> userIds) {
+            this.userIds = userIds;
         }
 
         public Long getServiceId() {
@@ -43,10 +43,12 @@ public class UserServiceController {
             this.serviceId = serviceId;
         }
     }
+
     @GetMapping
     public List<UserService> getAllUserServices() {
         return userServiceService.findAll();
     }
+
     @GetMapping("/services/{serviceId}/users")
     public List<User> getUsersByServiceId(@PathVariable Long serviceId) {
         return userServiceService.getUsersByServiceId(serviceId);
