@@ -8,11 +8,9 @@ import com.fibra.backendfibra.Service.ServiceEntityService;
 import com.fibra.backendfibra.Service.UserServiceService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.PageRequest;
 import java.util.List;
+import java.util.Map;
+import java.util.HashMap;
 import java.util.stream.Collectors;
 
 @RestController
@@ -28,12 +26,10 @@ public class ServiceEntityController {
     }
 
     @GetMapping
-    public Page<ServiceWithUsersResponse> getAllCustom(Pageable pageable) {
-        int page = pageable.getPageNumber();
-        int size = pageable.getPageSize();
-        // Ajusta para que a paginação comece em 1
-        if (page > 0) page = page - 1;
-        Pageable realPageable = PageRequest.of(page, size, pageable.getSort());
+    public Map<String, Object> getAllCustom(@RequestParam(defaultValue = "1") int page, @RequestParam(defaultValue = "10") int size) {
+        if (page < 1) {
+            throw new IllegalArgumentException("O número da página deve ser maior ou igual a 1.");
+        }
         List<ServiceEntity> services = service.findAllServices();
         List<ServiceWithUsersResponse> dtos = services.stream().map(s -> {
             ServiceWithUsersResponse dto = new ServiceWithUsersResponse();
@@ -44,11 +40,17 @@ public class ServiceEntityController {
             List<User> users = userServiceService.getUsersByServiceId(Long.valueOf(s.getId()));
             dto.setProfessionals(users.stream().map(u -> new ServiceWithUsersResponse.ProfessionalDTO(u.getId(), u.getFullName())).collect(Collectors.toList()));
             return dto;
-        }).collect(Collectors.toList());
-        int start = (int) realPageable.getOffset();
-        int end = Math.min((start + realPageable.getPageSize()), dtos.size());
-        List<ServiceWithUsersResponse> pagedList = dtos.subList(start, end);
-        return new PageImpl<>(pagedList, realPageable, dtos.size());
+        }).toList();
+        int start = (page - 1) * size;
+        int end = Math.min(start + size, dtos.size());
+        List<ServiceWithUsersResponse> pagedList = (start < end) ? dtos.subList(start, end) : List.of();
+        Map<String, Object> response = new HashMap<>();
+        response.put("number", page);
+        response.put("data", pagedList);
+        response.put("size", size);
+        response.put("totalPages", (int) Math.ceil((double) dtos.size() / size));
+        response.put("totalElements", dtos.size());
+        return response;
     }
 
     @GetMapping("/{id}")

@@ -11,6 +11,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
+import java.util.Map;
+import java.util.HashMap;
 
 @RestController
 @RequestMapping("/appointments2")
@@ -20,31 +25,15 @@ public class AppointmentController {
     public AppointmentController(AppointmentService appointmentService) {
         this.appointmentService = appointmentService;
     }
-    @GetMapping("/{id}")
-    public ResponseEntity<Appointment> getAppointmentById(@PathVariable Integer id) {
-        return appointmentService.findById(id)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
-    }
 
-    @PostMapping
-    public ResponseEntity<Appointment> createAppointment(@RequestBody AppointmentRequest request) throws InterruptedException {
-        Appointment appointment = appointmentService.createAppointment(request);
-        return ResponseEntity.ok(appointment);
-    }
-
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteAppointment(@PathVariable Integer id) {
-        if (appointmentService.findById(id).isPresent()) {
-            appointmentService.delete(id);
-            return ResponseEntity.ok().build();
-        }
-        return ResponseEntity.notFound().build();
-    }
     @GetMapping
-    public List<AppointmentListDTO> getAllAppointments() {
-        List<Appointment> appointments = appointmentService.findAll();
-        return appointments.stream().map(appointment -> {
+    public Map<String, Object> getAllAppointments(@PageableDefault Pageable pageable) {
+        int pageNumber = pageable.getPageNumber();
+        if (pageNumber < 1) {
+            throw new IllegalArgumentException("O número da página deve ser maior ou igual a 1.");
+        }
+        Page<Appointment> page = appointmentService.findAll(Pageable.ofSize(pageable.getPageSize()).withPage(pageNumber - 1));
+        List<AppointmentListDTO> data = page.getContent().stream().map(appointment -> {
             AppointmentListDTO dto = new AppointmentListDTO();
             dto.id = String.valueOf(appointment.getId());
             dto.dateTime = appointment.getDateTime();
@@ -85,15 +74,38 @@ public class AppointmentController {
             }
             return dto;
         }).toList();
+        Map<String, Object> response = new HashMap<>();
+        response.put("number", page.getNumber() + 1); // página começa em 1
+        response.put("data", data);
+        response.put("size", page.getSize());
+        response.put("totalPages", page.getTotalPages());
+        response.put("totalElements", page.getTotalElements());
+        return response;
     }
 
     private String mapStatus(Appointment.Status status) {
-        if (status == null) return null;
-        switch (status) {
-            case SCHEDULED: return "pendente";
-            case COMPLETED: return "confirmado";
-            case CANCELED: return "cancelado";
-            default: return status.name().toLowerCase();
-        }
+        return status != null ? status.name() : null;
     }
+    @GetMapping("/{id}")
+    public ResponseEntity<Appointment> getAppointmentById(@PathVariable Integer id) {
+        return appointmentService.findById(id)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
+    }
+    @PostMapping
+    public ResponseEntity<Appointment> createAppointment(@RequestBody AppointmentRequest request) throws InterruptedException {
+        Appointment appointment = appointmentService.createAppointment(request);
+        return ResponseEntity.ok(appointment);
+    }
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteAppointment(@PathVariable Integer id) {
+        if (appointmentService.findById(id).isPresent()) {
+            appointmentService.delete(id);
+            return ResponseEntity.ok().build();
+        }
+        return ResponseEntity.notFound().build();
+    }
+
+    // ...outros endpoints existentes...
 }
+

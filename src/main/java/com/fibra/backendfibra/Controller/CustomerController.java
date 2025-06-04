@@ -8,6 +8,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
+import java.util.Map;
+import java.util.HashMap;
+
 import java.util.List;
 
 @RestController
@@ -24,9 +30,19 @@ public class CustomerController {
     }
 
     @GetMapping
-    public ResponseEntity<List<Customer>> getAllCustomers() {
-        List<Customer> customers = customerService.findAll();
-        return ResponseEntity.ok(customers);
+    public Map<String, Object> getAllCustomers(@PageableDefault Pageable pageable) {
+        int pageNumber = pageable.getPageNumber();
+        if (pageNumber < 1) {
+            throw new IllegalArgumentException("O número da página deve ser maior ou igual a 1.");
+        }
+        Page<Customer> page = customerService.findAll(Pageable.ofSize(pageable.getPageSize()).withPage(pageNumber - 1));
+        Map<String, Object> response = new HashMap<>();
+        response.put("number", page.getNumber() + 1); // página começa em 1
+        response.put("data", page.getContent());
+        response.put("size", page.getSize());
+        response.put("totalPages", page.getTotalPages());
+        response.put("totalElements", page.getTotalElements());
+        return response;
     }
 
     @GetMapping("/{id}")

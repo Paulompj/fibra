@@ -4,6 +4,8 @@ import com.fibra.backendfibra.Model.Customer;
 import com.fibra.backendfibra.Repository.CustomerRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 import java.util.Optional;
@@ -20,6 +22,10 @@ public class CustomerService {
 
     public List<Customer> findAll() {
         return customerRepository.findAll();
+    }
+
+    public Page<Customer> findAll(Pageable pageable) {
+        return customerRepository.findAll(pageable);
     }
 
     public Optional<Customer> findById(Long id) {
