@@ -4,8 +4,10 @@ import com.fibra.backendfibra.DTO.ServiceWithUsersRequest;
 import com.fibra.backendfibra.DTO.ServiceWithUsersResponse;
 import com.fibra.backendfibra.Model.ServiceEntity;
 import com.fibra.backendfibra.Model.User;
+import com.fibra.backendfibra.Model.UserService;
 import com.fibra.backendfibra.Service.ServiceEntityService;
 import com.fibra.backendfibra.Service.UserServiceService;
+import com.fibra.backendfibra.Repository.UserServiceRepository;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
@@ -19,10 +21,12 @@ public class ServiceEntityController {
 
     private final ServiceEntityService service;
     private final UserServiceService userServiceService;
+    private final UserServiceRepository userServiceRepository;
 
-    public ServiceEntityController(ServiceEntityService service, UserServiceService userServiceService) {
+    public ServiceEntityController(ServiceEntityService service, UserServiceService userServiceService, UserServiceRepository userServiceRepository) {
         this.service = service;
         this.userServiceService = userServiceService;
+        this.userServiceRepository = userServiceRepository;
     }
 
     @GetMapping
@@ -73,6 +77,9 @@ public class ServiceEntityController {
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable Integer id) {
+        // Remove todos os vínculos de users_services antes de deletar o serviço
+        List<UserService> userServices = userServiceRepository.findByServiceId(id.longValue());
+        userServiceRepository.deleteAll(userServices);
         service.deleteById(id);
         return ResponseEntity.noContent().build();
     }

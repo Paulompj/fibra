@@ -46,7 +46,7 @@ public class Appointment {
     public Appointment() {
     }
     public enum Status {
-        SCHEDULED, COMPLETED, CANCELED
+        SCHEDULED, COMPLETED, CANCELED,DELAYED
     }
 
     public Customer getCustomer() {
