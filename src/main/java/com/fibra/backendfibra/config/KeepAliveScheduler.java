@@ -1,0 +1,26 @@
+package com.fibra.backendfibra.config;
+
+import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.stereotype.Component;
+import org.springframework.web.client.RestTemplate;
+import org.springframework.beans.factory.annotation.Value;
+
+@Component
+public class KeepAliveScheduler {
+
+    private final RestTemplate restTemplate = new RestTemplate();
+
+    @Value("${keepalive.url}")
+    private String keepAliveUrl;
+
+    @Scheduled(fixedRate = 300000) // 5 minutos em milissegundos
+    public void keepAlive() {
+        try {
+            restTemplate.getForObject(keepAliveUrl, String.class);
+        } catch (Exception e) {
+            // Loga a exceção, mas não interrompe o agendamento
+            System.err.println("[KeepAliveScheduler] Falha ao fazer requisição keep-alive: " + e.getMessage());
+        }
+    }
+}
+

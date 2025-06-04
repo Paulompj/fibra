@@ -1,8 +1,14 @@
 package com.fibra.backendfibra.Controller;
 
 import com.fibra.backendfibra.DTO.UserScheduleDTO;
+import com.fibra.backendfibra.DTO.CustomersWithAppointmentsResponseDTO;
+import com.fibra.backendfibra.DTO.CustomerWithAppointmentsDTO;
 import com.fibra.backendfibra.Model.User;
+import com.fibra.backendfibra.Model.Customer;
+import com.fibra.backendfibra.Model.CustomerType;
 import com.fibra.backendfibra.Repository.UserRepository;
+import com.fibra.backendfibra.Repository.CustomerRepository;
+import com.fibra.backendfibra.Repository.AppointmentRepository;
 import com.fibra.backendfibra.Service.UserService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -13,6 +19,8 @@ import com.fibra.backendfibra.Repository.UserServiceRepository;
 import com.fibra.backendfibra.Repository.ExpedientRepository;
 import com.fibra.backendfibra.Repository.DayOffRepository;
 import com.fibra.backendfibra.Repository.TimeOffRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 
 import java.util.List;
 import java.util.Optional;
@@ -27,18 +35,24 @@ public class UserController {
     private final ExpedientRepository expedientRepository;
     private final DayOffRepository dayOffRepository;
     private final TimeOffRepository timeOffRepository;
+    private final CustomerRepository customerRepository;
+    private final AppointmentRepository appointmentRepository;
 
     public UserController(UserService userService, UserRepository userRepository,
                          UserServiceRepository userServiceRepository,
                          ExpedientRepository expedientRepository,
                          DayOffRepository dayOffRepository,
-                         TimeOffRepository timeOffRepository) {
+                         TimeOffRepository timeOffRepository,
+                         CustomerRepository customerRepository,
+                         AppointmentRepository appointmentRepository) {
         this.userService = userService;
         this.userRepository = userRepository;
         this.userServiceRepository = userServiceRepository;
         this.expedientRepository = expedientRepository;
         this.dayOffRepository = dayOffRepository;
         this.timeOffRepository = timeOffRepository;
+        this.customerRepository = customerRepository;
+        this.appointmentRepository = appointmentRepository;
     }
 
     @GetMapping
@@ -70,6 +84,41 @@ public class UserController {
             timeOffs.isEmpty() ? null : timeOffs.get(0)
         );
         return ResponseEntity.ok(dto);
+    }
+
+    @GetMapping("/customers-with-appointments")
+    public ResponseEntity<?> getCustomersWithAppointments(
+            @RequestParam(defaultValue = "1") int page,
+            @RequestParam(defaultValue = "10") int size) {
+        if (page < 1) {
+            return ResponseEntity.badRequest().body("O número da página deve ser maior ou igual a 1.");
+        }
+        Page<Customer> customerPage = customerRepository.findAll(PageRequest.of(page - 1, size));
+        List<CustomerWithAppointmentsDTO> data = customerPage.getContent().stream().map(customer -> {
+            int count = appointmentRepository.countByCustomerId(customer.getId());
+            CustomerType type = customer.getCustomerType();
+            CustomerWithAppointmentsDTO.CustomerTypeDTO typeDTO = new CustomerWithAppointmentsDTO.CustomerTypeDTO(
+                    type != null ? type.getId().longValue() : null,
+                    type != null ? type.getName() : null
+            );
+            return new CustomerWithAppointmentsDTO(
+                    customer.getId(),
+                    customer.getFullName(),
+                    customer.getPhone(),
+                    customer.getAge(),
+                    customer.getAddress(),
+                    customer.getPhotoUrl(),
+                    typeDTO,
+                    count
+            );
+        }).toList();
+        return ResponseEntity.ok(new CustomersWithAppointmentsResponseDTO(
+                customerPage.getNumber() + 1,
+                data,
+                customerPage.getSize(),
+                customerPage.getTotalPages(),
+                customerPage.getTotalElements()
+        ));
     }
 
     @PostMapping
