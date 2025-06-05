@@ -13,6 +13,8 @@ public class ServiceEntity {
     @Column(columnDefinition = "TEXT")
     private String description;
     private Integer duration; // minutos
+    @OneToMany(mappedBy = "service", cascade = CascadeType.ALL, orphanRemoval = true)
+    private java.util.List<UserService> userServices;
 
     public ServiceEntity() {}
     public ServiceEntity(Integer id, String name, String description, Integer duration) {

@@ -17,6 +17,13 @@ public class UserService {
     @ManyToOne
     @JoinColumn(name = "service_id")
     private ServiceEntity service;
+    @OneToMany(mappedBy = "userService", cascade = CascadeType.ALL, orphanRemoval = true)
+    private java.util.List<DayOff> dayOffs;
+    @OneToMany(mappedBy = "userService", cascade = CascadeType.ALL, orphanRemoval = true)
+    private java.util.List<Expedient> expedients;
+
+    @OneToMany(mappedBy = "userService", cascade = CascadeType.ALL, orphanRemoval = true)
+    private java.util.List<TimeOff> timeOffs;
 
     public UserService() {}
 
