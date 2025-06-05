@@ -12,9 +12,9 @@ public class OpenApiConfig {
     public OpenAPI customOpenAPI() {
         return new OpenAPI()
                 .info(new Info()
-                        .title("API Fibra")
+                        .title("LabTeC - API Fibra")
                         .version("1.0.0")
-                        .description("Documentação da API Fibra com Swagger OpenAPI. Desenvolvida pelo [LabTeC - Laboratório de Tecnologias Computacionais](https://labtec.ufra.edu.br).")
+                        .description("Documentação da API Fibra com Swagger OpenAPI. Desenvolvida pelo LabTeC - Laboratório de Tecnologias Computacionais")
                         .contact(new Contact()
                                 .name("LabTeC - Laboratório de Tecnologias Computacionais")
                                 .email("labtec@ufra.edu.br")
