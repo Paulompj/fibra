@@ -8,13 +8,14 @@ import com.fibra.backendfibra.Model.UserService;
 import com.fibra.backendfibra.Service.ServiceEntityService;
 import com.fibra.backendfibra.Service.UserServiceService;
 import com.fibra.backendfibra.Repository.UserServiceRepository;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.Map;
 import java.util.HashMap;
 import java.util.stream.Collectors;
-
+@Tag(name = "Serviços", description = "Operações relacionadas a Serviços")
 @RestController
 @RequestMapping("/services")
 public class ServiceEntityController {

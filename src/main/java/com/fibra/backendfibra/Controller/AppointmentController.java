@@ -1,22 +1,27 @@
 package com.fibra.backendfibra.Controller;
 
-import com.fibra.backendfibra.Model.Appointment;
-import com.fibra.backendfibra.Service.AppointmentService;
-import com.fibra.backendfibra.DTO.AppointmentRequest;
 import com.fibra.backendfibra.DTO.AppointmentListDTO;
+import com.fibra.backendfibra.DTO.AppointmentRequest;
+import com.fibra.backendfibra.Model.Appointment;
 import com.fibra.backendfibra.Model.Customer;
-import com.fibra.backendfibra.Model.User;
 import com.fibra.backendfibra.Model.ServiceEntity;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
+import com.fibra.backendfibra.Model.User;
+import com.fibra.backendfibra.Service.AppointmentService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
-import java.util.Map;
-import java.util.HashMap;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+@Tag(name = "Agendamentos", description = "Operações relacionadas a agendamentos")
 @RestController
 @RequestMapping("/appointments2")
 public class AppointmentController {
@@ -26,6 +31,11 @@ public class AppointmentController {
         this.appointmentService = appointmentService;
     }
 
+    @Operation(summary = "Lista todos os agendamentos", description = "Retorna uma lista paginada de agendamentos.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Lista retornada com sucesso"),
+            @ApiResponse(responseCode = "400", description = "Requisição inválida")
+    })
     @GetMapping
     public Map<String, Object> getAllAppointments(@PageableDefault Pageable pageable) {
         int pageNumber = pageable.getPageNumber();
@@ -86,12 +96,22 @@ public class AppointmentController {
     private String mapStatus(Appointment.Status status) {
         return status != null ? status.name() : null;
     }
+    @Operation(summary = "Busca agendamento por ID", description = "Retorna um agendamento pelo seu ID.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Agendamento encontrado"),
+            @ApiResponse(responseCode = "404", description = "Agendamento não encontrado")
+    })
     @GetMapping("/{id}")
     public ResponseEntity<Appointment> getAppointmentById(@PathVariable Integer id) {
         return appointmentService.findById(id)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
+    @Operation(summary = "Cria um novo agendamento", description = "Cria um novo agendamento com os dados fornecidos.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Agendamento criado com sucesso"),
+            @ApiResponse(responseCode = "400", description = "Dados inválidos")
+    })
     @PostMapping
     public ResponseEntity<Appointment> createAppointment(@RequestBody AppointmentRequest request) throws InterruptedException {
         Appointment appointment = appointmentService.createAppointment(request);

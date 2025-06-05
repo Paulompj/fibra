@@ -11,6 +11,7 @@ import com.fibra.backendfibra.Repository.UserRepository;
 import com.fibra.backendfibra.Repository.CustomerRepository;
 import com.fibra.backendfibra.Repository.AppointmentRepository;
 import com.fibra.backendfibra.Service.UserService;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import com.fibra.backendfibra.Model.DayOff;
@@ -25,7 +26,7 @@ import org.springframework.data.domain.PageRequest;
 
 import java.util.List;
 import java.util.Optional;
-
+@Tag(name = "Professionais", description = "Operações relacionadas a Profissionais ou Users")
 @RestController
 @RequestMapping("/users2")
 public class UserController {

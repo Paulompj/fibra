@@ -61,6 +61,14 @@ public class UserServiceController {
         response.put("size", page.getSize());
         return response;
     }
+    @GetMapping("/id")
+    public Long getUserServiceId(@RequestParam Long userId, @RequestParam Long serviceId) {
+        UserService userService = userServiceService.findByUserIdAndServiceId(userId, serviceId);
+        if (userService != null) {
+            return userService.getId();
+        }
+        return null;
+    }
 
     @GetMapping("/services/{serviceId}/users")
     public List<User> getUsersByServiceId(@PathVariable Long serviceId) {

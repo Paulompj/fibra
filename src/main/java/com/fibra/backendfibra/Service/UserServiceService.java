@@ -22,6 +22,7 @@ import com.fibra.backendfibra.Repository.TimeOffRepository;
 import com.fibra.backendfibra.Repository.DayOffRepository;
 import com.fibra.backendfibra.Repository.AppointmentRepository;
 import org.springframework.data.domain.Page;
+import java.util.Optional;
 import org.springframework.data.domain.Pageable;
 
 @Service
@@ -95,6 +96,10 @@ public class UserServiceService {
             UserService userService = new UserService(user, service);
             return userServiceRepository.save(userService);
         }).collect(Collectors.toList());
+    }
+
+    public UserService findByUserIdAndServiceId(Long userId, Long serviceId) {
+        return userServiceRepository.findByUserIdAndServiceId(userId, serviceId);
     }
     public List<UserService> findAll() {
         return userServiceRepository.findAll();

@@ -7,6 +7,7 @@ import com.fibra.backendfibra.Model.CustomerType;
 import com.fibra.backendfibra.Repository.*;
 import com.fibra.backendfibra.Service.CustomerService;
 import com.fibra.backendfibra.Service.UserService;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
@@ -21,6 +22,7 @@ import java.util.HashMap;
 
 import java.util.List;
 
+@Tag(name = "Cliente", description = "Operações relacionadas aos Clientes")
 @RestController
 @RequestMapping("/customers")
 public class CustomerController {

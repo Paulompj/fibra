@@ -2,11 +2,12 @@ package com.fibra.backendfibra.Controller;
 
 import com.fibra.backendfibra.Model.Expedient;
 import com.fibra.backendfibra.Service.ExpedientService;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-
+@Tag(name = "Expedientes", description = "Operações relacionadas a cadastro de Expedientes")
 @RestController
 @RequestMapping("/expedients")
 public class ExpedientController {
