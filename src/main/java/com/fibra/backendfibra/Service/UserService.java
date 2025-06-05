@@ -1,19 +1,26 @@
 package com.fibra.backendfibra.Service;
 
+import com.fibra.backendfibra.DTO.UserWithServicesDTO;
 import com.fibra.backendfibra.Model.User;
 import com.fibra.backendfibra.Repository.UserRepository;
+import com.fibra.backendfibra.Repository.UserServiceRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class UserService {
 
     private final UserRepository userRepository;
+    private final UserServiceRepository userServiceRepository;
 
-    public UserService(UserRepository userRepository) {
+    public UserService(UserRepository userRepository, UserServiceRepository userServiceRepositoryp) {
         this.userRepository = userRepository;
+        userServiceRepository = userServiceRepositoryp;
     }
 
     public List<User> findAll() {
@@ -31,4 +38,24 @@ public class UserService {
     public void deleteById(Integer id) {
         userRepository.deleteById(id);
     }
+    public Page<UserWithServicesDTO> findUsersWithServices(Pageable pageable) {
+        Page<User> users = userRepository.findAll(pageable);
+        return users.map(user -> {
+            List<com.fibra.backendfibra.Model.UserService> userServices = userServiceRepository.findByUserId(user.getId().longValue());
+            List<UserWithServicesDTO.ServiceDTO> services = userServices.stream()
+                    .map(us -> new UserWithServicesDTO.ServiceDTO(
+                            us.getServiceEntity().getId(),
+                            us.getServiceEntity().getName()
+                    ))
+                    .collect(Collectors.toList());
+            return new UserWithServicesDTO(
+                    user.getId(),
+                    user.getFullName(),
+                    user.getEmail(),
+                    user.getRole() != null ? user.getRole().name() : null,
+                    services
+            );
+        });
+    }
+
 }

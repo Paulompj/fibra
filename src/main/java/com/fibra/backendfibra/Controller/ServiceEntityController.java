@@ -77,9 +77,6 @@ public class ServiceEntityController {
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable Integer id) {
-        // Remove todos os vínculos de users_services antes de deletar o serviço
-        List<UserService> userServices = userServiceRepository.findByServiceId(id.longValue());
-        userServiceRepository.deleteAll(userServices);
         service.deleteById(id);
         return ResponseEntity.noContent().build();
     }

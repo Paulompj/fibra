@@ -3,6 +3,7 @@ package com.fibra.backendfibra.Controller;
 import com.fibra.backendfibra.DTO.UserScheduleDTO;
 import com.fibra.backendfibra.DTO.CustomersWithAppointmentsResponseDTO;
 import com.fibra.backendfibra.DTO.CustomerWithAppointmentsDTO;
+import com.fibra.backendfibra.DTO.UserWithServicesDTO;
 import com.fibra.backendfibra.Model.User;
 import com.fibra.backendfibra.Model.Customer;
 import com.fibra.backendfibra.Model.CustomerType;
@@ -130,5 +131,21 @@ public class UserController {
     public ResponseEntity<Void> deleteUser(@PathVariable Integer id) {
         userService.deleteById(id);
         return ResponseEntity.noContent().build();
+    }
+    @GetMapping("/with-services")
+    public ResponseEntity<?> getUsersWithServices(
+            @RequestParam(defaultValue = "1") int page,
+            @RequestParam(defaultValue = "10") int size) {
+        if (page < 1) {
+            return ResponseEntity.badRequest().body("O número da página deve ser maior ou igual a 1.");
+        }
+        Page<UserWithServicesDTO> userPage = userService.findUsersWithServices(PageRequest.of(page - 1, size));
+        return ResponseEntity.ok(new Object() {
+            public final int number = userPage.getNumber() + 1;
+            public final Object data = userPage.getContent();
+            public final int size = userPage.getSize();
+            public final int totalPages = userPage.getTotalPages();
+            public final long totalElements = userPage.getTotalElements();
+        });
     }
 }

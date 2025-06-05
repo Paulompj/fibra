@@ -3,6 +3,10 @@ package com.fibra.backendfibra.Service;
 import com.fibra.backendfibra.DTO.ServiceWithUsersRequest;
 import com.fibra.backendfibra.Model.ServiceEntity;
 import com.fibra.backendfibra.Repository.ServiceEntityRepository;
+import com.fibra.backendfibra.Repository.DayOffRepository;
+import com.fibra.backendfibra.Repository.TimeOffRepository;
+import com.fibra.backendfibra.Repository.ExpedientRepository;
+import com.fibra.backendfibra.Repository.UserServiceRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -15,10 +19,18 @@ public class ServiceEntityService {
 
     private final ServiceEntityRepository repository;
     private final UserServiceService userServiceService;
+    private final DayOffRepository dayOffRepository;
+    private final TimeOffRepository timeOffRepository;
+    private final ExpedientRepository expedientRepository;
+    private final UserServiceRepository userServiceRepository;
 
-    public ServiceEntityService(ServiceEntityRepository repository, UserServiceService userServiceService) {
+    public ServiceEntityService(ServiceEntityRepository repository, UserServiceService userServiceService, DayOffRepository dayOffRepository, TimeOffRepository timeOffRepository, ExpedientRepository expedientRepository, UserServiceRepository userServiceRepository) {
         this.repository = repository;
         this.userServiceService = userServiceService;
+        this.dayOffRepository = dayOffRepository;
+        this.timeOffRepository = timeOffRepository;
+        this.expedientRepository = expedientRepository;
+        this.userServiceRepository = userServiceRepository;
     }
 
     public Page<ServiceEntity> findAll(Pageable pageable) {
@@ -36,6 +48,12 @@ public class ServiceEntityService {
     }
 
     public void deleteById(Integer id) {
+        Long userServiceId = Long.valueOf(id);
+        dayOffRepository.deleteAll(dayOffRepository.findByUserServiceId(userServiceId));
+        timeOffRepository.deleteAll(timeOffRepository.findByUserServiceId(userServiceId));
+        expedientRepository.deleteAll(expedientRepository.findByUserServiceId(userServiceId));
+        // Remover todos os vínculos de users_services antes de deletar o serviço
+        userServiceRepository.deleteAll(userServiceRepository.findByServiceId(userServiceId));
         repository.deleteById(id);
     }
 
