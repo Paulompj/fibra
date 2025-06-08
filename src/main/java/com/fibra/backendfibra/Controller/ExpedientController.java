@@ -1,6 +1,7 @@
 package com.fibra.backendfibra.Controller;
 
 import com.fibra.backendfibra.Model.Expedient;
+import com.fibra.backendfibra.Model.UserService;
 import com.fibra.backendfibra.Service.ExpedientService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,11 +18,18 @@ public class ExpedientController {
 
     @PostMapping
     public Expedient createExpedient(@RequestBody ExpedientRequest request) {
+        // Buscar o UserServiceId a partir de userId e serviceId
+        Long userId = request.getUserId();
+        Long serviceId = request.getServiceId();
+        UserService userService = expedientService.findUserServiceByUserIdAndServiceId(userId, serviceId);
+        if (userService == null) {
+            throw new RuntimeException("UserService não encontrado para userId=" + userId + " e serviceId=" + serviceId);
+        }
         return expedientService.createExpedient(
                 request.getWeekday(),
                 request.getStartTime(),
                 request.getEndTime(),
-                request.getUserServiceId()
+                userService.getId()
         );
     }
 
@@ -39,7 +47,8 @@ public class ExpedientController {
         private int weekday;
         private String startTime;
         private String endTime;
-        private Long userServiceId;
+        private Long userId;
+        private Long serviceId;
 
         public int getWeekday() {
             return weekday;
@@ -65,12 +74,20 @@ public class ExpedientController {
             this.endTime = endTime;
         }
 
-        public Long getUserServiceId() {
-            return userServiceId;
+        public Long getUserId() {
+            return userId;
         }
 
-        public void setUserServiceId(Long userServiceId) {
-            this.userServiceId = userServiceId;
+        public void setUserId(Long userId) {
+            this.userId = userId;
+        }
+
+        public Long getServiceId() {
+            return serviceId;
+        }
+
+        public void setServiceId(Long serviceId) {
+            this.serviceId = serviceId;
         }
     }
 }

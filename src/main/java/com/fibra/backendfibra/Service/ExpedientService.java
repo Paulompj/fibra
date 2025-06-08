@@ -45,4 +45,8 @@ public class ExpedientService {
     public List<Expedient> getByUserServiceId(Long userServiceId) {
         return expedientRepository.findByUserServiceId(userServiceId);
     }
+
+    public UserService findUserServiceByUserIdAndServiceId(Long userId, Long serviceId) {
+        return userServiceRepository.findByUserIdAndServiceId(userId, serviceId);
+    }
 }

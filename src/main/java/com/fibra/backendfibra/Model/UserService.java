@@ -48,11 +48,11 @@ public class UserService {
         this.user = user;
     }
 
-    public ServiceEntity getServiceEntity() {
+    public ServiceEntity getService() {
         return service;
     }
 
-    public void setServiceEntity(ServiceEntity service) {
+    public void setService(ServiceEntity service) {
         this.service = service;
     }
 }

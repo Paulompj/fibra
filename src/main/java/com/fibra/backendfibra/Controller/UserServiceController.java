@@ -1,6 +1,7 @@
 package com.fibra.backendfibra.Controller;
 
 import com.fibra.backendfibra.DTO.UserScheduleResponseDTO;
+import com.fibra.backendfibra.DTO.ProfessionalServiceExpedientResponseDTO;
 import com.fibra.backendfibra.Model.User;
 import com.fibra.backendfibra.Model.UserService;
 import com.fibra.backendfibra.Repository.UserServiceRepository;
@@ -79,5 +80,7 @@ public class UserServiceController {
     public UserScheduleResponseDTO getUserScheduleByUserAndService(@RequestParam Long userId, @RequestParam Long serviceId) {
         return userServiceService.getUserScheduleByUserAndService(userId, serviceId);
     }
+
+
 
 }

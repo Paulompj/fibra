@@ -1,9 +1,6 @@
 package com.fibra.backendfibra.Controller;
 
-import com.fibra.backendfibra.DTO.UserScheduleDTO;
-import com.fibra.backendfibra.DTO.CustomersWithAppointmentsResponseDTO;
-import com.fibra.backendfibra.DTO.CustomerWithAppointmentsDTO;
-import com.fibra.backendfibra.DTO.UserWithServicesDTO;
+import com.fibra.backendfibra.DTO.*;
 import com.fibra.backendfibra.Model.User;
 import com.fibra.backendfibra.Model.Customer;
 import com.fibra.backendfibra.Model.CustomerType;
@@ -11,7 +8,10 @@ import com.fibra.backendfibra.Repository.UserRepository;
 import com.fibra.backendfibra.Repository.CustomerRepository;
 import com.fibra.backendfibra.Repository.AppointmentRepository;
 import com.fibra.backendfibra.Service.UserService;
+import com.fibra.backendfibra.Service.UserServiceService;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import com.fibra.backendfibra.Model.DayOff;
@@ -24,7 +24,9 @@ import com.fibra.backendfibra.Repository.TimeOffRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 @Tag(name = "Professionais", description = "Operações relacionadas a Profissionais ou Users")
 @RestController
@@ -32,6 +34,7 @@ import java.util.Optional;
 public class UserController {
 
     private final UserService userService;
+    private final UserServiceService userServiceService;
     private final UserRepository userRepository;
     private final UserServiceRepository userServiceRepository;
     private final ExpedientRepository expedientRepository;
@@ -46,7 +49,8 @@ public class UserController {
                          DayOffRepository dayOffRepository,
                          TimeOffRepository timeOffRepository,
                          CustomerRepository customerRepository,
-                         AppointmentRepository appointmentRepository) {
+                         AppointmentRepository appointmentRepository,
+                          UserServiceService userServiceService) {
         this.userService = userService;
         this.userRepository = userRepository;
         this.userServiceRepository = userServiceRepository;
@@ -55,6 +59,7 @@ public class UserController {
         this.timeOffRepository = timeOffRepository;
         this.customerRepository = customerRepository;
         this.appointmentRepository = appointmentRepository;
+        this.userServiceService = userServiceService;
     }
 
     @GetMapping
@@ -148,5 +153,22 @@ public class UserController {
             public final int totalPages = userPage.getTotalPages();
             public final long totalElements = userPage.getTotalElements();
         });
+    }
+
+    @GetMapping("/professionals-services-expedients")
+    public ResponseEntity<?> getProfessionalsWithServicesAndExpedients(
+            @RequestParam(defaultValue = "1") int page,
+            @RequestParam(defaultValue = "10") int size) {
+        if (page < 1) {
+            return ResponseEntity.badRequest().body("O número da página deve ser maior ou igual a 1.");
+        }
+        Page<ProfessionalServiceExpedientResponseDTO> resultPage = userServiceService.getProfessionalsWithServicesAndExpedients(PageRequest.of(page - 1, size));
+        Map<String, Object> response = new HashMap<>();
+        response.put("number", resultPage.getNumber() + 1);
+        response.put("data", resultPage.getContent());
+        response.put("size", resultPage.getSize());
+        response.put("totalPages", resultPage.getTotalPages());
+        response.put("totalElements", resultPage.getTotalElements());
+        return ResponseEntity.ok(response);
     }
 }

@@ -24,6 +24,8 @@ import com.fibra.backendfibra.Repository.AppointmentRepository;
 import org.springframework.data.domain.Page;
 import java.util.Optional;
 import org.springframework.data.domain.Pageable;
+import com.fibra.backendfibra.DTO.ProfessionalServiceExpedientResponseDTO;
+
 
 @Service
 public class UserServiceService {
@@ -121,5 +123,42 @@ public class UserServiceService {
 
         UserService userService = new UserService(user, service);
         return userServiceRepository.save(userService);
+    }
+
+    public org.springframework.data.domain.Page<ProfessionalServiceExpedientResponseDTO> getProfessionalsWithServicesAndExpedients(Pageable pageable) {
+        // Buscar todos os usuários paginados
+        Page<User> usersPage = userRepository.findAll(pageable);
+        // Filtrar apenas usuários que possuem pelo menos um serviço vinculado
+        List<User> usersWithServices = usersPage.getContent().stream()
+            .filter(user -> !userServiceRepository.findByUserId((long)user.getId()).isEmpty())
+            .toList();
+        // Montar página customizada
+        List<ProfessionalServiceExpedientResponseDTO> dtos = usersWithServices.stream().map(user -> {
+            ProfessionalServiceExpedientResponseDTO dto = new ProfessionalServiceExpedientResponseDTO();
+            dto.id = user.getId() != null ? user.getId().longValue() : null;
+            dto.fullName = user.getFullName();
+            dto.email = user.getEmail();
+            dto.role = user.getRole() != null ? user.getRole().name() : null;
+            List<UserService> userServices = userServiceRepository.findByUserId((long)user.getId());
+            dto.services = userServices.stream().map(us -> {
+                ProfessionalServiceExpedientResponseDTO.ServiceWithExpedientsDTO serviceDTO = new ProfessionalServiceExpedientResponseDTO.ServiceWithExpedientsDTO();
+                serviceDTO.id = us.getService().getId().longValue();
+                serviceDTO.name = us.getService().getName();
+                List<com.fibra.backendfibra.Model.Expedient> expedients = expedientRepository.findByUserServiceId(us.getId());
+                serviceDTO.expedients = expedients.stream().map(exp -> {
+                    ProfessionalServiceExpedientResponseDTO.ExpedientDTO expDTO = new ProfessionalServiceExpedientResponseDTO.ExpedientDTO();
+                    expDTO.id = exp.getId();
+                    expDTO.weekday = exp.getWeekday();
+                    expDTO.startTime = exp.getStartTime().toString().substring(0,5);
+                    expDTO.endTime = exp.getEndTime().toString().substring(0,5);
+                    return expDTO;
+                }).toList();
+                return serviceDTO;
+            }).toList();
+            if (dto.services == null) dto.services = java.util.Collections.emptyList();
+            return dto;
+        }).toList();
+        // Retornar página customizada mantendo a paginação original
+        return new org.springframework.data.domain.PageImpl<>(dtos, pageable, usersPage.getTotalElements());
     }
 }
