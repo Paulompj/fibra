@@ -49,4 +49,8 @@ public class ExpedientService {
     public UserService findUserServiceByUserIdAndServiceId(Long userId, Long serviceId) {
         return userServiceRepository.findByUserIdAndServiceId(userId, serviceId);
     }
+
+    public void deleteExpedient(Long id) {
+        expedientRepository.deleteById(id);
+    }
 }

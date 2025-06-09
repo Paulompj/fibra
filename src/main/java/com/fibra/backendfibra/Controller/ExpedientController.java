@@ -43,6 +43,11 @@ public class ExpedientController {
         return expedientService.getByUserServiceId(userServiceId);
     }
 
+    @DeleteMapping("/{id}")
+    public void deleteExpedient(@PathVariable Long id) {
+        expedientService.deleteExpedient(id);
+    }
+
     public static class ExpedientRequest {
         private int weekday;
         private String startTime;
