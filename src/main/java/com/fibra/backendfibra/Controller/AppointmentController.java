@@ -46,6 +46,7 @@ public class AppointmentController {
         List<AppointmentListDTO> data = page.getContent().stream().map(appointment -> {
             AppointmentListDTO dto = new AppointmentListDTO();
             dto.id = String.valueOf(appointment.getId());
+            dto.id
             dto.dateTime = appointment.getDateTime();
             dto.status = mapStatus(appointment.getStatus());
             dto.observations = appointment.getObservations();
@@ -121,7 +122,7 @@ public class AppointmentController {
     public ResponseEntity<Void> deleteAppointment(@PathVariable Integer id) {
         if (appointmentService.findById(id).isPresent()) {
             appointmentService.delete(id);
-            return ResponseEntity.ok().build();
+            return ResponseEntity.noContent().build();
         }
         return ResponseEntity.notFound().build();
     }

@@ -4,6 +4,7 @@ import com.fibra.backendfibra.Model.DayOff;
 import com.fibra.backendfibra.Service.DayOffService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -32,7 +33,8 @@ public class DayOffController {
     }
 
     @DeleteMapping("/{id}")
-    public void delete(@PathVariable Long id) {
+    public ResponseEntity<Void> delete(@PathVariable Long id) {
         dayOffService.delete(id);
+        return ResponseEntity.noContent().build();
     }
 }

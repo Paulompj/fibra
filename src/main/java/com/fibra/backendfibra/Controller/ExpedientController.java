@@ -5,6 +5,7 @@ import com.fibra.backendfibra.Model.UserService;
 import com.fibra.backendfibra.Service.ExpedientService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -44,8 +45,9 @@ public class ExpedientController {
     }
 
     @DeleteMapping("/{id}")
-    public void deleteExpedient(@PathVariable Long id) {
+    public ResponseEntity<Void> deleteExpedient(@PathVariable Long id) {
         expedientService.deleteExpedient(id);
+        return ResponseEntity.noContent().build();
     }
 
     public static class ExpedientRequest {
