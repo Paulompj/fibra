@@ -23,7 +23,7 @@ import java.util.Map;
 
 @Tag(name = "Agendamentos", description = "Operações relacionadas a agendamentos")
 @RestController
-@RequestMapping("/appointments2")
+@RequestMapping("/appointments")
 public class AppointmentController {
     private final AppointmentService appointmentService;
 
@@ -46,7 +46,6 @@ public class AppointmentController {
         List<AppointmentListDTO> data = page.getContent().stream().map(appointment -> {
             AppointmentListDTO dto = new AppointmentListDTO();
             dto.id = String.valueOf(appointment.getId());
-            dto.id
             dto.dateTime = appointment.getDateTime();
             dto.status = mapStatus(appointment.getStatus());
             dto.observations = appointment.getObservations();

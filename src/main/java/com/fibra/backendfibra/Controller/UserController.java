@@ -30,7 +30,7 @@ import java.util.Map;
 import java.util.Optional;
 @Tag(name = "Professionais", description = "Operações relacionadas a Profissionais ou Users")
 @RestController
-@RequestMapping("/users2")
+@RequestMapping("/users")
 public class UserController {
 
     private final UserService userService;
