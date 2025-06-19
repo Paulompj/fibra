@@ -2,6 +2,8 @@ package com.fibra.backendfibra.Model;
 
 import jakarta.persistence.*;
 
+import java.util.List;
+
 @Entity
 @Table(name = "services")
 public class ServiceEntity {
@@ -15,6 +17,8 @@ public class ServiceEntity {
     private Integer duration; // minutos
     @OneToMany(mappedBy = "service", cascade = CascadeType.ALL, orphanRemoval = true)
     private java.util.List<UserService> userServices;
+    @OneToMany(mappedBy = "service", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Appointment> appointments;
 
     public ServiceEntity() {}
     public ServiceEntity(Integer id, String name, String description, Integer duration) {
