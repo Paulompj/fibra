@@ -1,6 +1,7 @@
 package com.fibra.backendfibra.Model;
 
 import jakarta.persistence.*;
+import java.util.*;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
@@ -16,6 +17,7 @@ public class User {
     private String password;
     @Enumerated(EnumType.STRING)
     private Role role;
+
 
     public User() {}
     public User(Integer id, String fullName, String email, String password, Role role) {
@@ -46,6 +48,28 @@ public class User {
     public String getPassword() {
         return password;
     }
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<UserService> userServices;
+
+    public List<UserService> getUserServices() {
+        return userServices;
+    }
+    public void setUserServices(List<UserService> userServices) {
+        this.userServices = userServices;
+    };
+    public void addUserService(UserService userService) {
+        if (userServices == null) {
+            userServices = new ArrayList<>();
+        }
+        userServices.add(userService);
+        userService.setUser(this);
+    };
+    public void removeUserService(UserService userService) {
+        if (userServices != null) {
+            userServices.remove(userService);
+            userService.setUser(null);
+        }
+    };
     public void setPassword(String password) {
         this.password = password;
     }
