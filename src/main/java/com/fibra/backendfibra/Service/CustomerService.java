@@ -48,5 +48,10 @@ public class CustomerService {
                 })
                 .orElseThrow(() -> new RuntimeException("CustomerType not found with id " + id));
     }
+    public List<Customer> findCustomersByName(String name) {
+        return customerRepository.findByFullNameContainingIgnoreCase(name);
+    }
+
+
 
 }

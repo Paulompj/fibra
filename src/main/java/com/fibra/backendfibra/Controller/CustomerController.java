@@ -132,4 +132,11 @@ public class CustomerController {
             return ResponseEntity.notFound().build();
         }
     }
+    @GetMapping("/search")
+    public ResponseEntity<List<Customer>> searchCustomersByName(@RequestParam String name) {
+        List<Customer> customers = customerService.findCustomersByName(name);
+        return ResponseEntity.ok(customers);
+    }
+
+
 }
