@@ -81,4 +81,10 @@ public class ServiceEntityController {
         service.deleteById(id);
         return ResponseEntity.noContent().build();
     }
+    @GetMapping("/search")
+    public ResponseEntity<List<ServiceEntity>> searchServicesByName(@RequestParam String name) {
+        List<ServiceEntity> services = service.findServicesByName(name);
+        return ResponseEntity.ok(services);
+    }
+
 }

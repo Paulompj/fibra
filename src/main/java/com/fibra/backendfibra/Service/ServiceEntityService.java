@@ -72,4 +72,8 @@ public class ServiceEntityService {
 
         return savedService;
     }
+    public List<ServiceEntity> findServicesByName(String name) {
+        return repository.findByNameContainingIgnoreCase(name);
+    }
+
 }
