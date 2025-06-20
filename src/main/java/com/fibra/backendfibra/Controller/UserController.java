@@ -105,11 +105,11 @@ public class UserController {
             int count = appointmentRepository.countByCustomerId(customer.getId());
             CustomerType type = customer.getCustomerType();
             CustomerWithAppointmentsDTO.CustomerTypeDTO typeDTO = new CustomerWithAppointmentsDTO.CustomerTypeDTO(
-                    type != null ? type.getId().longValue() : null,
+                    type != null ? String.valueOf(type.getId()) : null,
                     type != null ? type.getName() : null
             );
             return new CustomerWithAppointmentsDTO(
-                    customer.getId(),
+                    String.valueOf(customer.getId()),
                     customer.getFullName(),
                     customer.getPhone(),
                     customer.getAge(),
@@ -120,7 +120,7 @@ public class UserController {
             );
         }).toList();
         return ResponseEntity.ok(new CustomersWithAppointmentsResponseDTO(
-                customerPage.getNumber() + 1,
+                String.valueOf(customerPage.getNumber() + 1),
                 data,
                 customerPage.getSize(),
                 customerPage.getTotalPages(),

@@ -1,7 +1,7 @@
 package com.fibra.backendfibra.DTO;
 
 public class CustomerWithAppointmentsDTO {
-    private Long id;
+    private String id;
     private String fullName;
     private String phone;
     private Integer age;
@@ -10,7 +10,7 @@ public class CustomerWithAppointmentsDTO {
     private CustomerTypeDTO customerType;
     private int appointmentsCount;
 
-    public CustomerWithAppointmentsDTO(Long id, String fullName, String phone, Integer age, String address, String photoUrl, CustomerTypeDTO customerType, int appointmentsCount) {
+    public CustomerWithAppointmentsDTO(String id, String fullName, String phone, Integer age, String address, String photoUrl, CustomerTypeDTO customerType, int appointmentsCount) {
         this.id = id;
         this.fullName = fullName;
         this.phone = phone;
@@ -21,8 +21,8 @@ public class CustomerWithAppointmentsDTO {
         this.appointmentsCount = appointmentsCount;
     }
 
-    public Long getId() { return id; }
-    public void setId(Long id) { this.id = id; }
+    public String getId() { return id; }
+    public void setId(String id) { this.id = id; }
     public String getFullName() { return fullName; }
     public void setFullName(String fullName) { this.fullName = fullName; }
     public String getPhone() { return phone; }
@@ -39,16 +39,16 @@ public class CustomerWithAppointmentsDTO {
     public void setAppointmentsCount(int appointmentsCount) { this.appointmentsCount = appointmentsCount; }
 
     public static class CustomerTypeDTO {
-        private Long id;
+        private String id;
         private String name;
 
-        public CustomerTypeDTO(Long id, String name) {
+        public CustomerTypeDTO(String id, String name) {
             this.id = id;
             this.name = name;
         }
 
-        public Long getId() { return id; }
-        public void setId(Long id) { this.id = id; }
+        public String getId() { return id; }
+        public void setId(String id) { this.id = id; }
         public String getName() { return name; }
         public void setName(String name) { this.name = name; }
     }

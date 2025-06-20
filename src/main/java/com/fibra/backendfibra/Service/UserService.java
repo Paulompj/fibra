@@ -48,12 +48,12 @@ public class UserService {
             List<com.fibra.backendfibra.Model.UserService> userServices = userServiceRepository.findByUserId(user.getId().longValue());
             List<UserWithServicesDTO.ServiceDTO> services = userServices.stream()
                     .map(us -> new UserWithServicesDTO.ServiceDTO(
-                            us.getService().getId(),
+                            String.valueOf(us.getService().getId()),
                             us.getService().getName()
                     ))
                     .collect(Collectors.toList());
             return new UserWithServicesDTO(
-                    user.getId(),
+                    String.valueOf(user.getId()),
                     user.getFullName(),
                     user.getEmail(),
                     user.getRole() != null ? user.getRole().name() : null,

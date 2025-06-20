@@ -1,5 +1,7 @@
 package com.fibra.backendfibra.Model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
 
 @Entity
@@ -8,9 +10,11 @@ public class UserService {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @JsonFormat(shape = JsonFormat.Shape.STRING)
     private Long id;
 
     @ManyToOne
+    @JsonBackReference
     @JoinColumn(name = "user_id")
     private User user;
 

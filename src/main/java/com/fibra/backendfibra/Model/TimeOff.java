@@ -1,5 +1,7 @@
 package com.fibra.backendfibra.Model;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
@@ -9,6 +11,7 @@ public class TimeOff {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @JsonFormat(shape = JsonFormat.Shape.STRING)
     private Long id;
 
     @Column(name = "start_date_time")
@@ -18,6 +21,7 @@ public class TimeOff {
     private LocalDateTime endDateTime;
 
     @ManyToOne
+    @JsonIgnoreProperties("timeOffs")
     @JoinColumn(name = "users_services_id")
     private UserService userService;
 

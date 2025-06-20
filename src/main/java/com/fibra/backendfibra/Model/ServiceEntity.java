@@ -1,5 +1,6 @@
 package com.fibra.backendfibra.Model;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
 
 import java.util.List;
@@ -9,6 +10,7 @@ import java.util.List;
 public class ServiceEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @JsonFormat(shape = JsonFormat.Shape.STRING)
     private Integer id;
     @Column(length = 50, nullable = false, unique = true)
     private String name;

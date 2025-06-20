@@ -38,12 +38,12 @@ public class ServiceEntityController {
         List<ServiceEntity> services = service.findAllServices();
         List<ServiceWithUsersResponse> dtos = services.stream().map(s -> {
             ServiceWithUsersResponse dto = new ServiceWithUsersResponse();
-            dto.setId(s.getId());
+            dto.setId(String.valueOf(s.getId()));
             dto.setName(s.getName());
             dto.setDescription(s.getDescription());
             dto.setDuration(s.getDuration());
             List<User> users = userServiceService.getUsersByServiceId(Long.valueOf(s.getId()));
-            dto.setProfessionals(users.stream().map(u -> new ServiceWithUsersResponse.ProfessionalDTO(u.getId(), u.getFullName())).collect(Collectors.toList()));
+            dto.setProfessionals(users.stream().map(u -> new ServiceWithUsersResponse.ProfessionalDTO(String.valueOf(u.getId()), u.getFullName())).collect(Collectors.toList()));
             return dto;
         }).toList();
         int start = (page - 1) * size;

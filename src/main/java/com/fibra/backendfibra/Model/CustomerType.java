@@ -1,5 +1,6 @@
 package com.fibra.backendfibra.Model;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -9,6 +10,8 @@ import jakarta.persistence.Id;
 public class CustomerType {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @JsonFormat(shape = JsonFormat.Shape.STRING)
+
     private Integer id;
     private String name;
 

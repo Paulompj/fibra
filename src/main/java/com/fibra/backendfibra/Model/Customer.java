@@ -1,5 +1,6 @@
 package com.fibra.backendfibra.Model;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 
@@ -8,6 +9,8 @@ import jakarta.validation.constraints.*;
 public class Customer {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @JsonFormat(shape = JsonFormat.Shape.STRING)
+
     private Long id;
     @NotBlank(message = "Nome completo é obrigatório")
     @Size(max = 100)

@@ -87,11 +87,11 @@ public class CustomerController {
             int count = appointmentRepository.countByCustomerId(customer.getId());
             CustomerType type = customer.getCustomerType();
             CustomerWithAppointmentsDTO.CustomerTypeDTO typeDTO = new CustomerWithAppointmentsDTO.CustomerTypeDTO(
-                    type != null ? type.getId().longValue() : null,
+                    type != null ? String.valueOf(customerPage.getNumber() + 1) : null,
                     type != null ? type.getName() : null
             );
             return new CustomerWithAppointmentsDTO(
-                    customer.getId(),
+                    String.valueOf(customer.getId()),
                     customer.getFullName(),
                     customer.getPhone(),
                     customer.getAge(),
@@ -101,8 +101,9 @@ public class CustomerController {
                     count
             );
         }).toList();
+        String number = String.valueOf(customerPage.getNumber() + 1);
         return ResponseEntity.ok(new CustomersWithAppointmentsResponseDTO(
-                customerPage.getNumber() + 1,
+                String.valueOf(customerPage.getNumber() + 1),
                 data,
                 customerPage.getSize(),
                 customerPage.getTotalPages(),

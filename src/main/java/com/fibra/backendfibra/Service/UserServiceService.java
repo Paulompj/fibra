@@ -57,7 +57,7 @@ public class UserServiceService {
 
         List<UserScheduleResponseDTO.ExpedientDTO> expedientDTOs = expedients.stream().map(e -> {
             UserScheduleResponseDTO.ExpedientDTO dto = new UserScheduleResponseDTO.ExpedientDTO();
-            dto.id = e.getId();
+            dto.id = String.valueOf(e.getId());
             dto.weekday = e.getWeekday();
             dto.startTime = e.getStartTime().toString().substring(0,5);
             dto.endTime = e.getEndTime().toString().substring(0,5);
@@ -65,14 +65,14 @@ public class UserServiceService {
         }).toList();
         List<UserScheduleResponseDTO.TimeOffDTO> timeOffDTOs = timeOffs.stream().map(t -> {
             UserScheduleResponseDTO.TimeOffDTO dto = new UserScheduleResponseDTO.TimeOffDTO();
-            dto.id = t.getId();
+            dto.id = String.valueOf(t.getId());
             dto.startDateTime = t.getStartDateTime().toString();
             dto.endDateTime = t.getEndDateTime().toString();
             return dto;
         }).toList();
         List<UserScheduleResponseDTO.DayOffDTO> dayOffDTOs = dayOffs.stream().map(d -> {
             UserScheduleResponseDTO.DayOffDTO dto = new UserScheduleResponseDTO.DayOffDTO();
-            dto.id = d.getId();
+            dto.id = String.valueOf(d.getId());
             dto.dayOff = d.getDayOff().atStartOfDay().toString();
             return dto;
         }).toList();
@@ -83,7 +83,7 @@ public class UserServiceService {
             return dto;
         }).toList();
         return new UserScheduleResponseDTO(
-            user.getId().longValue(),
+            String.valueOf(user.getId()),
             user.getFullName(),
             expedientDTOs,
             timeOffDTOs,
@@ -135,19 +135,19 @@ public class UserServiceService {
         // Montar página customizada
         List<ProfessionalServiceExpedientResponseDTO> dtos = usersWithServices.stream().map(user -> {
             ProfessionalServiceExpedientResponseDTO dto = new ProfessionalServiceExpedientResponseDTO();
-            dto.id = user.getId() != null ? user.getId().longValue() : null;
+            dto.id = user.getId() != null ? String.valueOf(user.getId()) : null;
             dto.fullName = user.getFullName();
             dto.email = user.getEmail();
             dto.role = user.getRole() != null ? user.getRole().name() : null;
             List<UserService> userServices = userServiceRepository.findByUserId((long)user.getId());
             dto.services = userServices.stream().map(us -> {
                 ProfessionalServiceExpedientResponseDTO.ServiceWithExpedientsDTO serviceDTO = new ProfessionalServiceExpedientResponseDTO.ServiceWithExpedientsDTO();
-                serviceDTO.id = us.getService().getId().longValue();
+                serviceDTO.id = String.valueOf(us.getService().getId());
                 serviceDTO.name = us.getService().getName();
                 List<com.fibra.backendfibra.Model.Expedient> expedients = expedientRepository.findByUserServiceId(us.getId());
                 serviceDTO.expedients = expedients.stream().map(exp -> {
                     ProfessionalServiceExpedientResponseDTO.ExpedientDTO expDTO = new ProfessionalServiceExpedientResponseDTO.ExpedientDTO();
-                    expDTO.id = exp.getId();
+                    expDTO.id = String.valueOf(exp.getId());
                     expDTO.weekday = exp.getWeekday();
                     expDTO.startTime = exp.getStartTime().toString().substring(0,5);
                     expDTO.endTime = exp.getEndTime().toString().substring(0,5);
