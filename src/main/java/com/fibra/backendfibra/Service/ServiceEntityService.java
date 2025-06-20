@@ -75,5 +75,27 @@ public class ServiceEntityService {
     public List<ServiceEntity> findServicesByName(String name) {
         return repository.findByNameContainingIgnoreCase(name);
     }
+    public ServiceEntity updateServiceEntity(Long id, ServiceEntity updatedServiceEntity) {
+        // Busca a ServiceEntity pelo ID para garantir que existe
+        ServiceEntity existingServiceEntity = repository.findById(Math.toIntExact(id))
+                .orElseThrow(() -> new RuntimeException("ServiceEntity não encontrada com o ID: " + id));
+
+        // Atualiza os campos necessários
+        if (updatedServiceEntity.getName() != null) {
+            existingServiceEntity.setName(updatedServiceEntity.getName());
+        }
+
+        if (updatedServiceEntity.getDescription() != null) {
+            existingServiceEntity.setDescription(updatedServiceEntity.getDescription());
+        }
+
+        if (updatedServiceEntity.getDuration() != null) {
+            existingServiceEntity.setDuration(updatedServiceEntity.getDuration());
+        }
+
+        // Salva a entidade atualizada
+        return repository.save(existingServiceEntity);
+    }
+
 
 }

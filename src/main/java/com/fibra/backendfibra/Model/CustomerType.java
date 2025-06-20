@@ -1,9 +1,6 @@
 package com.fibra.backendfibra.Model;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.*;
 import jakarta.persistence.*;
 
 import java.util.ArrayList;
@@ -20,6 +17,7 @@ public class CustomerType {
     @OneToMany(mappedBy = "customerType", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonManagedReference
     @JsonIgnoreProperties("customerType")
+    @JsonIgnore
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private List<Customer> customers = new ArrayList<>();
 

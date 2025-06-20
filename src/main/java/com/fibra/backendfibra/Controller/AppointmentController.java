@@ -126,6 +126,24 @@ public class AppointmentController {
         }
         return ResponseEntity.notFound().build();
     }
+    @Operation(summary = "Atualiza um agendamento por ID", description = "Atualiza os detalhes de um agendamento existente.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Agendamento atualizado com sucesso"),
+            @ApiResponse(responseCode = "404", description = "Agendamento não encontrado"),
+            @ApiResponse(responseCode = "400", description = "Dados inválidos na requisição")
+    })
+    @PutMapping("/{id}")
+    public ResponseEntity<Appointment> updateAppointment(
+            @PathVariable Integer id,
+            @RequestBody AppointmentRequest request) {
+        try {
+            Appointment updatedAppointment = appointmentService.updateAppointment(id, request);
+            return ResponseEntity.ok(updatedAppointment);
+        } catch (RuntimeException e) {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
 
     // ...outros endpoints existentes...
 }

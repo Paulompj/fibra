@@ -9,6 +9,7 @@ import com.fibra.backendfibra.Service.ServiceEntityService;
 import com.fibra.backendfibra.Service.UserServiceService;
 import com.fibra.backendfibra.Repository.UserServiceRepository;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
@@ -86,5 +87,16 @@ public class ServiceEntityController {
         List<ServiceEntity> services = service.findServicesByName(name);
         return ResponseEntity.ok(services);
     }
+    @PutMapping("/{id}")
+    public ResponseEntity<ServiceEntity> updateServiceEntity(
+            @PathVariable Long id,
+            @RequestBody ServiceEntity updatedServiceEntity) {
+
+        // Atualiza a ServiceEntity pelo ID
+        ServiceEntity updatedEntity = service.updateServiceEntity(id, updatedServiceEntity);
+
+        return ResponseEntity.ok(updatedEntity);
+    }
+
 
 }

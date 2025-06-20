@@ -69,4 +69,32 @@ public class AppointmentService {
         appointmentRepository.deleteById(id);
     }
 
+
+    public Appointment updateAppointment(Integer id, AppointmentRequest request) {
+        // Verificar se o agendamento existe
+        Appointment existingAppointment = appointmentRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Agendamento não encontrado com o ID: " + id));
+
+        // Atualizar os campos do agendamento com base na requisição
+        Customer customer = customerRepository.findById(request.getCustomerId())
+                .orElseThrow(() -> new RuntimeException("Cliente não encontrado com o ID: " + request.getCustomerId()));
+
+        User user = userRepository.findById(request.getUserId())
+                .orElseThrow(() -> new RuntimeException("Usuário não encontrado com o ID: " + request.getUserId()));
+
+        ServiceEntity service = serviceEntityRepository.findById(request.getServiceId())
+                .orElseThrow(() -> new RuntimeException("Serviço não encontrado com o ID: " + request.getServiceId()));
+
+        // Atualizando as propriedades do agendamento
+        existingAppointment.setCustomer(customer);
+        existingAppointment.setDateTime(request.getDateTime());
+        existingAppointment.setObservations(request.getObservations());
+        existingAppointment.setProfessional(user);
+        existingAppointment.setService(service);
+        existingAppointment.setStatus(request.getStatus());
+
+        // Salvar o agendamento atualizado no repositório
+        return appointmentRepository.save(existingAppointment);
+    }
+
 }

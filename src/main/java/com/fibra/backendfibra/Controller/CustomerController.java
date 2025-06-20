@@ -6,6 +6,7 @@ import com.fibra.backendfibra.Model.Customer;
 import com.fibra.backendfibra.Model.CustomerType;
 import com.fibra.backendfibra.Repository.*;
 import com.fibra.backendfibra.Service.CustomerService;
+import com.fibra.backendfibra.Service.CustomerTypeService;
 import com.fibra.backendfibra.Service.UserService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -30,6 +31,7 @@ public class CustomerController {
     @Autowired
     private CustomerService customerService;
     private final UserService userService;
+    private final CustomerTypeService customerTypeService;
     private final UserRepository userRepository;
     private final UserServiceRepository userServiceRepository;
     private final ExpedientRepository expedientRepository;
@@ -38,14 +40,15 @@ public class CustomerController {
     private final CustomerRepository customerRepository;
     private final AppointmentRepository appointmentRepository;
 
-    public CustomerController(UserService userService, UserRepository userRepository,
-                          UserServiceRepository userServiceRepository,
-                          ExpedientRepository expedientRepository,
-                          DayOffRepository dayOffRepository,
-                          TimeOffRepository timeOffRepository,
-                          CustomerRepository customerRepository,
-                          AppointmentRepository appointmentRepository) {
+    public CustomerController(UserService userService, CustomerTypeService customerTypeService, UserRepository userRepository,
+                              UserServiceRepository userServiceRepository,
+                              ExpedientRepository expedientRepository,
+                              DayOffRepository dayOffRepository,
+                              TimeOffRepository timeOffRepository,
+                              CustomerRepository customerRepository,
+                              AppointmentRepository appointmentRepository) {
         this.userService = userService;
+        this.customerTypeService = customerTypeService;
         this.userRepository = userRepository;
         this.userServiceRepository = userServiceRepository;
         this.expedientRepository = expedientRepository;
@@ -56,9 +59,24 @@ public class CustomerController {
     }
     @PostMapping
     public ResponseEntity<Customer> createCustomer(@RequestBody @Valid Customer customer) {
-        Customer saved = customerService.save(customer);
-        return ResponseEntity.ok(saved);
+        // Buscar o CustomerType pelo ID fornecido
+        if (customer.getCustomerType() == null || customer.getCustomerType().getId() == null) {
+            return ResponseEntity.badRequest().body(null); // Retorna erro caso customerType não seja identificado
+        }
+
+        CustomerType customerType = customerTypeService.findById(Long.parseLong(String.valueOf(customer.getCustomerType().getId())))
+                .orElseThrow(() -> new RuntimeException(
+                        "Tipo de cliente não encontrado com o ID: " + customer.getCustomerType().getId()));
+
+        // Associar o CustomerType ao Customer
+        customer.setCustomerType(customerType);
+
+        // Salvar o Customer no banco
+        Customer savedCustomer = customerService.save(customer);
+
+        return ResponseEntity.ok(savedCustomer);
     }
+
 
     @GetMapping
     public Map<String, Object> getAllCustomers(@PageableDefault Pageable pageable) {
