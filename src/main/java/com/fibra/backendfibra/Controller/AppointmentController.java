@@ -117,6 +117,7 @@ public class AppointmentController {
         Appointment appointment = appointmentService.createAppointment(request);
         return ResponseEntity.ok(appointment);
     }
+
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteAppointment(@PathVariable Integer id) {
         if (appointmentService.findById(id).isPresent()) {

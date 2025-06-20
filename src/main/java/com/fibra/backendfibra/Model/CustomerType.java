@@ -1,10 +1,13 @@
 package com.fibra.backendfibra.Model;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import jakarta.persistence.*;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 public class CustomerType {
@@ -14,6 +17,11 @@ public class CustomerType {
 
     private Integer id;
     private String name;
+    @OneToMany(mappedBy = "customerType", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference
+    @JsonIgnoreProperties("customerType")
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+    private List<Customer> customers = new ArrayList<>();
 
     public CustomerType() {}
     public CustomerType(Integer id, String name) {

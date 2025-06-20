@@ -1,5 +1,6 @@
 package com.fibra.backendfibra.Model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
@@ -28,6 +29,7 @@ public class Customer {
     @Column(name = "photo_url")
     private String photoUrl;
     @ManyToOne
+    @JsonBackReference
     @JoinColumn(name = "customer_type", nullable = false)
     private CustomerType customerType;
 

@@ -4,6 +4,7 @@ import com.fibra.backendfibra.DTO.AppointmentRequest;
 import com.fibra.backendfibra.Model.*;
 import com.fibra.backendfibra.Repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -67,4 +68,5 @@ public class AppointmentService {
     public void delete(Integer id) {
         appointmentRepository.deleteById(id);
     }
+
 }
