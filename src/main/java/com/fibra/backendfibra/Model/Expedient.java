@@ -3,7 +3,7 @@ package com.fibra.backendfibra.Model;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
-import java.time.LocalTime;
+import java.time.OffsetDateTime;
 
 @Entity
 @Table(name = "expedients")
@@ -16,9 +16,9 @@ public class Expedient {
 
     private int weekday;
 
-    private LocalTime startTime;
+    private OffsetDateTime startTime;
 
-    private LocalTime endTime;
+    private OffsetDateTime endTime;
 
     @ManyToOne
     @JsonIgnoreProperties("expedients")
@@ -27,7 +27,7 @@ public class Expedient {
 
     public Expedient() {}
 
-    public Expedient(int weekday, LocalTime startTime, LocalTime endTime, UserService userService) {
+    public Expedient(int weekday, OffsetDateTime startTime, OffsetDateTime endTime, UserService userService) {
         this.weekday = weekday;
         this.startTime = startTime;
         this.endTime = endTime;
@@ -46,19 +46,19 @@ public class Expedient {
         this.weekday = weekday;
     }
 
-    public LocalTime getStartTime() {
+    public OffsetDateTime getStartTime() {
         return startTime;
     }
 
-    public void setStartTime(LocalTime startTime) {
+    public void setStartTime(OffsetDateTime startTime) {
         this.startTime = startTime;
     }
 
-    public LocalTime getEndTime() {
+    public OffsetDateTime getEndTime() {
         return endTime;
     }
 
-    public void setEndTime(LocalTime endTime) {
+    public void setEndTime(OffsetDateTime endTime) {
         this.endTime = endTime;
     }
 

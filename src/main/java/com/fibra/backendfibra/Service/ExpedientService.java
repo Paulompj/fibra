@@ -22,6 +22,9 @@ public class ExpedientService {
     @Autowired
     private com.fibra.backendfibra.Repository.ServiceEntityRepository serviceEntityRepository;
 
+    @Autowired
+    private com.fibra.backendfibra.Repository.UserRepository userRepository;
+
 
 
     public Expedient createExpedient(int weekday, String startTime, String endTime, Long userServiceId) {
@@ -30,8 +33,8 @@ public class ExpedientService {
 
         Expedient expedient = new Expedient(
                 weekday,
-                java.time.LocalTime.parse(startTime),
-                java.time.LocalTime.parse(endTime),
+                java.time.OffsetDateTime.of(java.time.LocalDate.now(), java.time.LocalTime.parse(startTime), java.time.ZoneOffset.UTC),
+                java.time.OffsetDateTime.of(java.time.LocalDate.now(), java.time.LocalTime.parse(endTime), java.time.ZoneOffset.UTC),
                 userService
         );
 
@@ -50,7 +53,32 @@ public class ExpedientService {
         return userServiceRepository.findByUserIdAndServiceId(userId, serviceId);
     }
 
+    public UserService getOrCreateUserService(Long userId, Long serviceId) {
+        UserService userService = userServiceRepository.findByUserIdAndServiceId(userId, serviceId);
+        if (userService != null) {
+            return userService;
+        }
+        com.fibra.backendfibra.Model.User user = userRepository.findById(userId.intValue())
+                .orElseThrow(() -> new RuntimeException("User não encontrado"));
+        ServiceEntity service = serviceEntityRepository.findById(Math.toIntExact(serviceId))
+                .orElseThrow(() -> new RuntimeException("ServiceEntity não encontrado"));
+        userService = new UserService(user, service);
+        return userServiceRepository.save(userService);
+    }
+
     public void deleteExpedient(Long id) {
         expedientRepository.deleteById(id);
+    }
+
+    public Expedient updateExpedient(Long id, int weekday, String startTime, String endTime, Long userServiceId) {
+        Expedient expedient = expedientRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Expedient não encontrado"));
+        UserService userService = userServiceRepository.findById(userServiceId)
+                .orElseThrow(() -> new RuntimeException("UserService não encontrado"));
+        expedient.setWeekday(weekday);
+        expedient.setStartTime(java.time.OffsetDateTime.of(java.time.LocalDate.now(), java.time.LocalTime.parse(startTime), java.time.ZoneOffset.UTC));
+        expedient.setEndTime(java.time.OffsetDateTime.of(java.time.LocalDate.now(), java.time.LocalTime.parse(endTime), java.time.ZoneOffset.UTC));
+        expedient.setUserService(userService);
+        return expedientRepository.save(expedient);
     }
 }

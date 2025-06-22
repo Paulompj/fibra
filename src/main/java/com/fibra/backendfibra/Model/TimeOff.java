@@ -3,7 +3,7 @@ package com.fibra.backendfibra.Model;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 
 @Entity
 @Table(name = "time_offs")
@@ -15,10 +15,10 @@ public class TimeOff {
     private Long id;
 
     @Column(name = "start_date_time")
-    private LocalDateTime startDateTime;
+    private OffsetDateTime startDateTime;
 
     @Column(name = "end_date_time")
-    private LocalDateTime endDateTime;
+    private OffsetDateTime endDateTime;
 
     @ManyToOne
     @JsonIgnoreProperties("timeOffs")
@@ -27,7 +27,7 @@ public class TimeOff {
 
     public TimeOff() {}
 
-    public TimeOff(LocalDateTime startDateTime, LocalDateTime endDateTime, UserService userService) {
+    public TimeOff(OffsetDateTime startDateTime, OffsetDateTime endDateTime, UserService userService) {
         this.startDateTime = startDateTime;
         this.endDateTime = endDateTime;
         this.userService = userService;
@@ -37,19 +37,19 @@ public class TimeOff {
         return id;
     }
 
-    public LocalDateTime getStartDateTime() {
+    public OffsetDateTime getStartDateTime() {
         return startDateTime;
     }
 
-    public void setStartDateTime(LocalDateTime startDateTime) {
+    public void setStartDateTime(OffsetDateTime startDateTime) {
         this.startDateTime = startDateTime;
     }
 
-    public LocalDateTime getEndDateTime() {
+    public OffsetDateTime getEndDateTime() {
         return endDateTime;
     }
 
-    public void setEndDateTime(LocalDateTime endDateTime) {
+    public void setEndDateTime(OffsetDateTime endDateTime) {
         this.endDateTime = endDateTime;
     }
 

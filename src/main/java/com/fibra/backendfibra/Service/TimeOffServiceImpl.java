@@ -27,4 +27,15 @@ public class TimeOffServiceImpl implements TimeOffService {
     public List<TimeOff> getByUserServiceId(Long userServiceId) {
         return timeOffRepository.findByUserServiceId(userServiceId);
     }
+
+    public TimeOff updateTimeOff(Long id, TimeOff updatedTimeOff) {
+        return timeOffRepository.findById(id)
+                .map(existing -> {
+                    existing.setStartDateTime(updatedTimeOff.getStartDateTime());
+                    existing.setEndDateTime(updatedTimeOff.getEndDateTime());
+                    existing.setUserService(updatedTimeOff.getUserService());
+                    return timeOffRepository.save(existing);
+                })
+                .orElseThrow(() -> new RuntimeException("TimeOff not found with id " + id));
+    }
 }

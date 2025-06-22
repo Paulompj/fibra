@@ -1,10 +1,10 @@
 package com.fibra.backendfibra.DTO;
 
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 
 public class AppointmentListDTO {
     public String id;
-    public LocalDateTime dateTime;
+    public OffsetDateTime dateTime;
     public String status;
     public String observations;
     public CustomerDTO customer;

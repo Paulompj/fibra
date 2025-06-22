@@ -9,6 +9,7 @@ import com.fibra.backendfibra.Repository.UserServiceRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -66,20 +67,20 @@ public class UserServiceService {
         List<UserScheduleResponseDTO.TimeOffDTO> timeOffDTOs = timeOffs.stream().map(t -> {
             UserScheduleResponseDTO.TimeOffDTO dto = new UserScheduleResponseDTO.TimeOffDTO();
             dto.id = String.valueOf(t.getId());
-            dto.startDateTime = t.getStartDateTime().toString();
-            dto.endDateTime = t.getEndDateTime().toString();
+            dto.startDateTime = OffsetDateTime.parse(t.getStartDateTime().toString());
+            dto.endDateTime = OffsetDateTime.parse(t.getEndDateTime().toString());
             return dto;
         }).toList();
         List<UserScheduleResponseDTO.DayOffDTO> dayOffDTOs = dayOffs.stream().map(d -> {
             UserScheduleResponseDTO.DayOffDTO dto = new UserScheduleResponseDTO.DayOffDTO();
             dto.id = String.valueOf(d.getId());
-            dto.dayOff = d.getDayOff().atStartOfDay().toString();
+            dto.dayOff = d.getDayOff().toString();
             return dto;
         }).toList();
         List<UserScheduleResponseDTO.AppointmentDTO> appointmentDTOs = appointments.stream().map(a -> {
             UserScheduleResponseDTO.AppointmentDTO dto = new UserScheduleResponseDTO.AppointmentDTO();
             dto.id = a.getId().toString();
-            dto.dateTime = a.getDateTime().toString();
+            dto.dateTime = OffsetDateTime.parse(a.getDateTime().toString());
             return dto;
         }).toList();
         return new UserScheduleResponseDTO(

@@ -88,14 +88,9 @@ public class ServiceEntityController {
         return ResponseEntity.ok(services);
     }
     @PutMapping("/{id}")
-    public ResponseEntity<ServiceEntity> updateServiceEntity(
-            @PathVariable Long id,
-            @RequestBody ServiceEntity updatedServiceEntity) {
-
-        // Atualiza a ServiceEntity pelo ID
-        ServiceEntity updatedEntity = service.updateServiceEntity(id, updatedServiceEntity);
-
-        return ResponseEntity.ok(updatedEntity);
+    public ResponseEntity<ServiceEntity> updateServiceEntity(@PathVariable Integer id, @RequestBody ServiceEntity updated) {
+        ServiceEntity result = service.update(id, updated);
+        return ResponseEntity.ok(result);
     }
 
 

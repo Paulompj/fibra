@@ -2,7 +2,7 @@ package com.fibra.backendfibra.Model;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 
 @Entity
 @Table(name = "appointments2")
@@ -19,7 +19,8 @@ public class Appointment {
     private Status status;
 
     @Column(name = "date_time", nullable = false)
-    private LocalDateTime dateTime;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ssXXX")
+    private OffsetDateTime dateTime;
 
     @Column(columnDefinition = "TEXT")
     private String observations;
@@ -38,7 +39,7 @@ public class Appointment {
 
     // Getters e setters
 
-    public Appointment(Customer customer, LocalDateTime dateTime,String observations, User user, ServiceEntity service, Status status) {
+    public Appointment(Customer customer, OffsetDateTime dateTime,String observations, User user, ServiceEntity service, Status status) {
         this.customer = customer;
         this.dateTime = dateTime;
         this.observations = observations;
@@ -60,11 +61,11 @@ public class Appointment {
         this.customer = customer;
     }
 
-    public LocalDateTime getDateTime() {
+    public OffsetDateTime getDateTime() {
         return dateTime;
     }
 
-    public void setDateTime(LocalDateTime dateTime) {
+    public void setDateTime(OffsetDateTime dateTime) {
         this.dateTime = dateTime;
     }
 

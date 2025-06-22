@@ -97,5 +97,13 @@ public class ServiceEntityService {
         return repository.save(existingServiceEntity);
     }
 
+    public ServiceEntity update(Integer id, ServiceEntity updated) {
+        ServiceEntity entity = repository.findById(id)
+            .orElseThrow(() -> new RuntimeException("ServiceEntity não encontrado"));
+        entity.setName(updated.getName());
+        entity.setDescription(updated.getDescription());
+        entity.setDuration(updated.getDuration());
+        return repository.save(entity);
+    }
 
 }

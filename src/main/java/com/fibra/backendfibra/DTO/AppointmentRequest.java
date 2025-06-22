@@ -2,14 +2,14 @@ package com.fibra.backendfibra.DTO;
 
 import com.fibra.backendfibra.Model.Appointment.Status;
 
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 
 public class AppointmentRequest {
 
     private Long customerId;
     private Long userId;
     private Long serviceId;
-    private LocalDateTime dateTime;
+    private OffsetDateTime dateTime;
     private String observations;
     private Status status;
 
@@ -37,11 +37,11 @@ public class AppointmentRequest {
         this.serviceId = serviceId;
     }
 
-    public LocalDateTime getDateTime() {
+    public OffsetDateTime getDateTime() {
         return dateTime;
     }
 
-    public void setDateTime(LocalDateTime dateTime) {
+    public void setDateTime(OffsetDateTime dateTime) {
         this.dateTime = dateTime;
     }
 

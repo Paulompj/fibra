@@ -30,4 +30,9 @@ public class TimeOffController {
     public List<TimeOff> getByUserServiceId(@PathVariable Long userServiceId) {
         return timeOffService.getByUserServiceId(userServiceId);
     }
+
+    @PutMapping("/{id}")
+    public TimeOff updateTimeOff(@PathVariable Long id, @RequestBody TimeOff updatedTimeOff) {
+        return timeOffService.updateTimeOff(id, updatedTimeOff);
+    }
 }

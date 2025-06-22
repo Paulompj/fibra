@@ -24,7 +24,7 @@ public class UserService {
 
     public UserService(UserRepository userRepository, UserServiceRepository userServiceRepositoryp) {
         this.userRepository = userRepository;
-        userServiceRepository = userServiceRepositoryp;
+        this.userServiceRepository = userServiceRepositoryp;
     }
 
     public List<User> findAll() {

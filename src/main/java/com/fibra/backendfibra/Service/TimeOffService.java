@@ -8,4 +8,5 @@ public interface TimeOffService {
     TimeOff createTimeOff(TimeOff timeOff);
     List<TimeOff> getAllTimeOffs();
     List<TimeOff> getByUserServiceId(Long userServiceId);
+    TimeOff updateTimeOff(Long id, TimeOff updatedTimeOff);
 }

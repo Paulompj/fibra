@@ -3,7 +3,7 @@ package com.fibra.backendfibra.Model;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
-import java.time.LocalDate;
+import java.time.OffsetDateTime;
 
 @Entity
 @Table(name = "day_offs")
@@ -14,7 +14,7 @@ public class DayOff {
     @JsonFormat(shape = JsonFormat.Shape.STRING)
     private Long id;
 
-    private LocalDate dayOff;
+    private OffsetDateTime dayOff;
 
     @ManyToOne
     @JsonIgnoreProperties("dayOffs")
@@ -31,11 +31,11 @@ public class DayOff {
         this.id = id;
     }
 
-    public LocalDate getDayOff() {
+    public OffsetDateTime getDayOff() {
         return dayOff;
     }
 
-    public void setDayOff(LocalDate dayOff) {
+    public void setDayOff(OffsetDateTime dayOff) {
         this.dayOff = dayOff;
     }
 

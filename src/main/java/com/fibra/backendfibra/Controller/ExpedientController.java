@@ -19,13 +19,9 @@ public class ExpedientController {
 
     @PostMapping
     public Expedient createExpedient(@RequestBody ExpedientRequest request) {
-        // Buscar o UserServiceId a partir de userId e serviceId
         Long userId = request.getUserId();
         Long serviceId = request.getServiceId();
-        UserService userService = expedientService.findUserServiceByUserIdAndServiceId(userId, serviceId);
-        if (userService == null) {
-            throw new RuntimeException("UserService não encontrado para userId=" + userId + " e serviceId=" + serviceId);
-        }
+        UserService userService = expedientService.getOrCreateUserService(userId, serviceId);
         return expedientService.createExpedient(
                 request.getWeekday(),
                 request.getStartTime(),
@@ -48,6 +44,21 @@ public class ExpedientController {
     public ResponseEntity<Void> deleteExpedient(@PathVariable Long id) {
         expedientService.deleteExpedient(id);
         return ResponseEntity.noContent().build();
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<Expedient> updateExpedient(@PathVariable Long id, @RequestBody ExpedientRequest request) {
+        Long userId = request.getUserId();
+        Long serviceId = request.getServiceId();
+        UserService userService = expedientService.getOrCreateUserService(userId, serviceId);
+        Expedient updated = expedientService.updateExpedient(
+            id,
+            request.getWeekday(),
+            request.getStartTime(),
+            request.getEndTime(),
+            userService.getId()
+        );
+        return ResponseEntity.ok(updated);
     }
 
     public static class ExpedientRequest {

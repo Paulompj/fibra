@@ -1,5 +1,6 @@
 package com.fibra.backendfibra.Model;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
@@ -17,6 +18,7 @@ public class Customer {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @JsonFormat(shape = JsonFormat.Shape.STRING)
     private Long id;
 
     @NotNull(message = "O nome completo é obrigatório")
@@ -38,7 +40,7 @@ public class Customer {
     @ManyToOne(cascade = CascadeType.PERSIST, fetch = FetchType.EAGER)
     @JoinColumn(name = "customer_type", nullable = false)
     @NotNull(message = "O tipo de cliente é obrigatório")
-    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+    @JsonProperty(access = JsonProperty.Access.READ_WRITE)
     private CustomerType customerType;
 
     public Long getId() {

@@ -1,5 +1,6 @@
 package com.fibra.backendfibra.DTO;
 
+import java.time.OffsetDateTime;
 import java.util.List;
 
 public class UserScheduleResponseDTO {
@@ -18,8 +19,8 @@ public class UserScheduleResponseDTO {
     }
     public static class TimeOffDTO {
         public String id;
-        public String startDateTime;
-        public String endDateTime;
+        public OffsetDateTime startDateTime;
+        public OffsetDateTime endDateTime;
     }
     public static class DayOffDTO {
         public String id;
@@ -27,7 +28,7 @@ public class UserScheduleResponseDTO {
     }
     public static class AppointmentDTO {
         public String id;
-        public String dateTime;
+        public OffsetDateTime dateTime;
     }
 
     public UserScheduleResponseDTO() {}
@@ -52,4 +53,3 @@ public class UserScheduleResponseDTO {
     public void setDayOffs(List<DayOffDTO> dayOffs) { this.dayOffs = dayOffs; }
     public void setAppointments(List<AppointmentDTO> appointments) { this.appointments = appointments; }
 }
-
