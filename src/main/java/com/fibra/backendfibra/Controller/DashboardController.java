@@ -110,8 +110,8 @@ public class DashboardController {
         if (value == null) return null;
         if (value instanceof OffsetDateTime) return (OffsetDateTime) value;
         if (value instanceof java.sql.Timestamp) return ((java.sql.Timestamp) value).toInstant().atOffset(OffsetDateTime.now().getOffset());
-        if (value instanceof java.util.Date) return ((java.util.Date) value).toInstant().atOffset(OffsetDateTime.now().getOffset());
         if (value instanceof java.sql.Date) return ((java.sql.Date) value).toLocalDate().atStartOfDay().atOffset(OffsetDateTime.now().getOffset());
+        if (value instanceof java.util.Date) return ((java.util.Date) value).toInstant().atOffset(OffsetDateTime.now().getOffset());
         if (value instanceof java.time.LocalDate) return ((java.time.LocalDate) value).atStartOfDay().atOffset(OffsetDateTime.now().getOffset());
         return null;
     }
