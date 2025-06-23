@@ -23,6 +23,9 @@ import com.fibra.backendfibra.Repository.DayOffRepository;
 import com.fibra.backendfibra.Repository.TimeOffRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 import java.util.HashMap;
 import java.util.List;
@@ -172,17 +175,46 @@ public class UserController {
         return ResponseEntity.ok(response);
     }
 
+    // PUT /users/{id} - Usuário logado pode alterar apenas seus próprios dados (exceto senha, mesmo se for ADMIN)
     @PutMapping("/{id}")
-    public ResponseEntity<User> updateUser(@PathVariable Integer id, @RequestBody User user) {
-        return userService.findById(id)
-                .map(existingUser -> {
-                    existingUser.setFullName(user.getFullName());
-                    existingUser.setEmail(user.getEmail());
-                    existingUser.setRole(user.getRole());
-                    // Não atualiza a senha!
-                    User updated = userService.save(existingUser);
-                    return ResponseEntity.ok(updated);
-                })
-                .orElse(ResponseEntity.notFound().build());
+    public ResponseEntity<?> updateUser(@PathVariable Integer id, @RequestBody UserUpdateRequest request) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+        User user = userService.findById(id).orElse(null);
+        if (user == null) {
+            return ResponseEntity.status(404).body("Usuário não encontrado.");
+        }
+        if (!user.getEmail().equals(username)) {
+            return ResponseEntity.status(403).body("Você só pode editar seu próprio usuário.");
+        }
+        // Nunca permite alteração de senha nesta rota, mesmo se for ADMIN
+        user.setFullName(request.getFullName());
+        user.setEmail(request.getEmail());
+        if (request.getRole() != null) user.setRole(User.Role.fromString(request.getRole()));
+        userService.save(user);
+        return ResponseEntity.ok("Usuário atualizado com sucesso. (Senha não pode ser alterada por esta rota)");
+    }
+
+    // PUT /users/admin/{id} - Somente ADMIN pode alterar qualquer usuário (inclusive senha)
+    @PreAuthorize("hasRole('ADMIN')")
+    @PutMapping("/admin/{id}")
+    public ResponseEntity<?> adminUpdateUser(@PathVariable Integer id, @RequestBody UserAdminUpdateRequest request, Authentication authentication) {
+        // Verificação extra para garantir que só ADMIN pode acessar
+        if (authentication == null || authentication.getAuthorities().stream().noneMatch(a -> a.getAuthority().equals("ROLE_ADMIN"))) {
+            return ResponseEntity.status(401).body("unauthorized");
+        }
+        User user = userService.findById(id).orElse(null);
+        if (user == null) {
+            return ResponseEntity.status(404).body("Usuário não encontrado.");
+        }
+        user.setFullName(request.getFullName());
+        user.setEmail(request.getEmail());
+        if (request.getRole() != null) user.setRole(User.Role.fromString(request.getRole()));
+        if (request.getPassword() != null && !request.getPassword().isEmpty()) {
+            user.setPassword(request.getPassword());
+        }
+        System.out.println("Atualizando usuário: " + user.getEmail() + " com nova senha: " + request.getPassword() + " e role: " + request.getRole());
+        userService.save(user);
+        return ResponseEntity.ok("Usuário atualizado com sucesso pelo ADMIN (senha pode ter sido alterada).");
     }
 }

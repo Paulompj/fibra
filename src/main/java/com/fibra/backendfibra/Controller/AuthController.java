@@ -38,7 +38,11 @@ public class AuthController {
                     )
             );
             UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-            String token = jwtUtil.generateToken(userDetails.getUsername());
+            User user = userService.findByEmail(userDetails.getUsername());
+            if (user == null) {
+                return ResponseEntity.status(401).body("Usuário não encontrado");
+            }
+            String token = jwtUtil.generateToken(user.getEmail(), user.getRole().name());
             return ResponseEntity.ok(new LoginResponse(token));
         } catch (BadCredentialsException e) {
             return ResponseEntity.status(401).body("Email ou senha inválidos");

@@ -11,5 +11,6 @@ import java.util.List;
 public interface CustomerRepository extends JpaRepository<Customer, Long> {
     List<Customer> findByFullNameContainingIgnoreCase(String fullName);
 
-
+    @org.springframework.data.jpa.repository.Query("SELECT c.customerType.name, COUNT(c) FROM Customer c GROUP BY c.customerType.name")
+    java.util.List<Object[]> countByTypeGroup();
 }
