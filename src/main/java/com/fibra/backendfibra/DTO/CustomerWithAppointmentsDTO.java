@@ -21,6 +21,23 @@ public class CustomerWithAppointmentsDTO {
         this.appointmentsCount = appointmentsCount;
     }
 
+    public CustomerWithAppointmentsDTO(com.fibra.backendfibra.Model.Customer customer) {
+        this.id = customer.getId() != null ? customer.getId().toString() : null;
+        this.fullName = customer.getFullName();
+        this.phone = customer.getPhone();
+        this.age = customer.getAge();
+        this.address = customer.getAddress();
+        this.photoUrl = customer.getPhotoUrl();
+        if (customer.getCustomerType() != null) {
+            this.customerType = new CustomerTypeDTO(
+                customer.getCustomerType().getId() != null ? customer.getCustomerType().getId().toString() : null,
+                customer.getCustomerType().getName()
+            );
+        }
+        // Por padrão, appointmentsCount = 0. Se precisar, ajuste para buscar a contagem real.
+        this.appointmentsCount = 0;
+    }
+
     public String getId() { return id; }
     public void setId(String id) { this.id = id; }
     public String getFullName() { return fullName; }
@@ -53,4 +70,3 @@ public class CustomerWithAppointmentsDTO {
         public void setName(String name) { this.name = name; }
     }
 }
-

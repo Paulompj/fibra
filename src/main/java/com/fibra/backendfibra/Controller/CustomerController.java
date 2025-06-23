@@ -2,6 +2,7 @@ package com.fibra.backendfibra.Controller;
 
 import com.fibra.backendfibra.DTO.CustomerWithAppointmentsDTO;
 import com.fibra.backendfibra.DTO.CustomersWithAppointmentsResponseDTO;
+import com.fibra.backendfibra.DTO.CustomerUpdateRequest;
 import com.fibra.backendfibra.Model.Customer;
 import com.fibra.backendfibra.Model.CustomerType;
 import com.fibra.backendfibra.Repository.*;
@@ -79,54 +80,36 @@ public class CustomerController {
 
 
     @GetMapping
-    public Map<String, Object> getAllCustomers(@PageableDefault Pageable pageable) {
-        int pageNumber = pageable.getPageNumber();
-        if (pageNumber < 1) {
-            throw new IllegalArgumentException("O número da página deve ser maior ou igual a 1.");
+    public ResponseEntity<?> getCustomers(
+            @RequestParam(required = false) String search,
+            @RequestParam(required = false) Integer page,
+            @RequestParam(required = false) Integer size
+    ) {
+        if ((search == null || search.isEmpty()) && (page == null || size == null)) {
+            return ResponseEntity.badRequest().body("É obrigatório informar o método de busca");
         }
-        Page<Customer> page = customerService.findAll(Pageable.ofSize(pageable.getPageSize()).withPage(pageNumber - 1));
-        Map<String, Object> response = new HashMap<>();
-        response.put("number", page.getNumber() + 1); // página começa em 1
-        response.put("data", page.getContent());
-        response.put("size", page.getSize());
-        response.put("totalPages", page.getTotalPages());
-        response.put("totalElements", page.getTotalElements());
-        return response;
-    }
-    @GetMapping("/customers-with-appointments")
-    public ResponseEntity<?> getCustomersWithAppointments(
-            @RequestParam(defaultValue = "1") int page,
-            @RequestParam(defaultValue = "10") int size) {
-        if (page < 1) {
-            return ResponseEntity.badRequest().body("O número da página deve ser maior ou igual a 1.");
+        if (search != null && !search.isEmpty()) {
+            List<Customer> customers = customerService.findCustomersByName(search);
+            List<CustomerWithAppointmentsDTO> dtos = customers.stream()
+                .map(customer -> new CustomerWithAppointmentsDTO(customer))
+                .toList();
+            return ResponseEntity.ok(dtos);
+        } else {
+            if (page == null || size == null || page < 1) {
+                return ResponseEntity.badRequest().body("Parâmetros 'page' e 'size' são obrigatórios e 'page' deve ser maior ou igual a 1.");
+            }
+            var customerPage = customerService.findAllPaginated(page - 1, size);
+            var data = customerPage.getContent().stream()
+                .map(CustomerWithAppointmentsDTO::new)
+                .toList();
+            return ResponseEntity.ok(new CustomersWithAppointmentsResponseDTO(
+                    String.valueOf(customerPage.getNumber() + 1),
+                    data,
+                    customerPage.getSize(),
+                    customerPage.getTotalPages(),
+                    customerPage.getTotalElements()
+            ));
         }
-        Page<Customer> customerPage = customerRepository.findAll(PageRequest.of(page - 1, size));
-        List<CustomerWithAppointmentsDTO> data = customerPage.getContent().stream().map(customer -> {
-            int count = appointmentRepository.countByCustomerId(customer.getId());
-            CustomerType type = customer.getCustomerType();
-            CustomerWithAppointmentsDTO.CustomerTypeDTO typeDTO = new CustomerWithAppointmentsDTO.CustomerTypeDTO(
-                    type != null ? String.valueOf(customerPage.getNumber() + 1) : null,
-                    type != null ? type.getName() : null
-            );
-            return new CustomerWithAppointmentsDTO(
-                    String.valueOf(customer.getId()),
-                    customer.getFullName(),
-                    customer.getPhone(),
-                    customer.getAge(),
-                    customer.getAddress(),
-                    customer.getPhotoUrl(),
-                    typeDTO,
-                    count
-            );
-        }).toList();
-        String number = String.valueOf(customerPage.getNumber() + 1);
-        return ResponseEntity.ok(new CustomersWithAppointmentsResponseDTO(
-                String.valueOf(customerPage.getNumber() + 1),
-                data,
-                customerPage.getSize(),
-                customerPage.getTotalPages(),
-                customerPage.getTotalElements()
-        ));
     }
     @GetMapping("/{id}")
     public ResponseEntity<Customer> getCustomerById(@PathVariable Long id) {
@@ -142,18 +125,13 @@ public class CustomerController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Customer> update(@PathVariable Long id, @RequestBody Customer customer) {
+    public ResponseEntity<Customer> update(@PathVariable Long id, @RequestBody CustomerUpdateRequest request) {
         try {
-            Customer updated = customerService.update(id, customer);
+            Customer updated = customerService.update(id, request);
             return ResponseEntity.ok(updated);
         } catch (RuntimeException e) {
             return ResponseEntity.notFound().build();
         }
-    }
-    @GetMapping("/search")
-    public ResponseEntity<List<Customer>> searchCustomersByName(@RequestParam String name) {
-        List<Customer> customers = customerService.findCustomersByName(name);
-        return ResponseEntity.ok(customers);
     }
 
 

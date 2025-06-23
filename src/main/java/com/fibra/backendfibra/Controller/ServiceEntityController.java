@@ -32,31 +32,53 @@ public class ServiceEntityController {
     }
 
     @GetMapping
-    public Map<String, Object> getAllCustom(@RequestParam(defaultValue = "1") int page, @RequestParam(defaultValue = "10") int size) {
-        if (page < 1) {
-            throw new IllegalArgumentException("O número da página deve ser maior ou igual a 1.");
+    public ResponseEntity<?> getServices(
+            @RequestParam(required = false) String search,
+            @RequestParam(required = false) Integer page,
+            @RequestParam(required = false) Integer size
+    ) {
+        if ((search == null || search.isEmpty()) && (page == null || size == null)) {
+            return ResponseEntity.badRequest().body("É obrigatório informar o método de busca");
         }
-        List<ServiceEntity> services = service.findAllServices();
-        List<ServiceWithUsersResponse> dtos = services.stream().map(s -> {
-            ServiceWithUsersResponse dto = new ServiceWithUsersResponse();
-            dto.setId(String.valueOf(s.getId()));
-            dto.setName(s.getName());
-            dto.setDescription(s.getDescription());
-            dto.setDuration(s.getDuration());
-            List<User> users = userServiceService.getUsersByServiceId(Long.valueOf(s.getId()));
-            dto.setProfessionals(users.stream().map(u -> new ServiceWithUsersResponse.ProfessionalDTO(String.valueOf(u.getId()), u.getFullName())).collect(Collectors.toList()));
-            return dto;
-        }).toList();
-        int start = (page - 1) * size;
-        int end = Math.min(start + size, dtos.size());
-        List<ServiceWithUsersResponse> pagedList = (start < end) ? dtos.subList(start, end) : List.of();
-        Map<String, Object> response = new HashMap<>();
-        response.put("number", page);
-        response.put("data", pagedList);
-        response.put("size", size);
-        response.put("totalPages", (int) Math.ceil((double) dtos.size() / size));
-        response.put("totalElements", dtos.size());
-        return response;
+        if (search != null && !search.isEmpty()) {
+            List<ServiceEntity> services = service.findServicesByName(search);
+            List<ServiceWithUsersResponse> dtos = services.stream().map(s -> {
+                ServiceWithUsersResponse dto = new ServiceWithUsersResponse();
+                dto.setId(String.valueOf(s.getId()));
+                dto.setName(s.getName());
+                dto.setDescription(s.getDescription());
+                dto.setDuration(s.getDuration());
+                List<User> users = userServiceService.getUsersByServiceId(Long.valueOf(s.getId()));
+                dto.setProfessionals(users.stream().map(u -> new ServiceWithUsersResponse.ProfessionalDTO(String.valueOf(u.getId()), u.getFullName())).collect(Collectors.toList()));
+                return dto;
+            }).toList();
+            return ResponseEntity.ok(dtos);
+        } else {
+            if (page == null || size == null || page < 1) {
+                return ResponseEntity.badRequest().body("Parâmetros 'page' e 'size' são obrigatórios e 'page' deve ser maior ou igual a 1.");
+            }
+            List<ServiceEntity> services = service.findAllServices();
+            List<ServiceWithUsersResponse> dtos = services.stream().map(s -> {
+                ServiceWithUsersResponse dto = new ServiceWithUsersResponse();
+                dto.setId(String.valueOf(s.getId()));
+                dto.setName(s.getName());
+                dto.setDescription(s.getDescription());
+                dto.setDuration(s.getDuration());
+                List<User> users = userServiceService.getUsersByServiceId(Long.valueOf(s.getId()));
+                dto.setProfessionals(users.stream().map(u -> new ServiceWithUsersResponse.ProfessionalDTO(String.valueOf(u.getId()), u.getFullName())).collect(Collectors.toList()));
+                return dto;
+            }).toList();
+            int start = (page - 1) * size;
+            int end = Math.min(start + size, dtos.size());
+            List<ServiceWithUsersResponse> pagedList = (start < end) ? dtos.subList(start, end) : List.of();
+            Map<String, Object> response = new HashMap<>();
+            response.put("number", page);
+            response.put("data", pagedList);
+            response.put("size", size);
+            response.put("totalPages", (int) Math.ceil((double) dtos.size() / size));
+            response.put("totalElements", dtos.size());
+            return ResponseEntity.ok(response);
+        }
     }
 
     @GetMapping("/{id}")
@@ -82,15 +104,10 @@ public class ServiceEntityController {
         service.deleteById(id);
         return ResponseEntity.noContent().build();
     }
-    @GetMapping("/search")
-    public ResponseEntity<List<ServiceEntity>> searchServicesByName(@RequestParam String name) {
-        List<ServiceEntity> services = service.findServicesByName(name);
-        return ResponseEntity.ok(services);
-    }
     @PutMapping("/{id}")
-    public ResponseEntity<ServiceEntity> updateServiceEntity(@PathVariable Integer id, @RequestBody ServiceEntity updated) {
-        ServiceEntity result = service.update(id, updated);
-        return ResponseEntity.ok(result);
+    public ResponseEntity<ServiceEntity> updateServiceEntity(@PathVariable Integer id, @RequestBody ServiceWithUsersRequest request) {
+        ServiceEntity updated = service.updateServiceProfessionals(id, request.getUserIds());
+        return ResponseEntity.ok(updated);
     }
 
 

@@ -11,6 +11,7 @@ import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 import java.util.Optional;
+import com.fibra.backendfibra.DTO.CustomerUpdateRequest;
 
 @Service
 public class CustomerService {
@@ -39,21 +40,19 @@ public class CustomerService {
     public void delete(Long id) {
         customerRepository.deleteById(id);
     }
-    public Customer update(Long id, Customer customer) {
+    public Customer update(Long id, CustomerUpdateRequest request) {
         return customerRepository.findById(id)
                 .map(existingCustomer -> {
-                    existingCustomer.setFullName(customer.getFullName());
-                    existingCustomer.setAge(customer.getAge());
-                    existingCustomer.setPhone(customer.getPhone());
-                    existingCustomer.setAddress(customer.getAddress());
-                    existingCustomer.setPhotoUrl(customer.getPhotoUrl());
-
-                    // Busca segura do CustomerType pelo ID
-                    Long typeId = Long.valueOf(customer.getCustomerType().getId());
-                    CustomerType existingType = customerTypeRepository.findById(typeId)
-                            .orElseThrow(() -> new RuntimeException("Tipo de cliente não encontrado com id " + typeId));
-                    existingCustomer.setCustomerType(existingType);
-
+                    existingCustomer.setFullName(request.getFullName());
+                    existingCustomer.setAge(request.getAge());
+                    existingCustomer.setPhone(request.getPhone());
+                    existingCustomer.setAddress(request.getAddress());
+                    existingCustomer.setPhotoUrl(request.getPhotoUrl());
+                    if (request.getCustomerTypeId() != null) {
+                        CustomerType type = customerTypeRepository.findById(request.getCustomerTypeId())
+                                .orElseThrow(() -> new RuntimeException("Tipo de cliente não encontrado com id " + request.getCustomerTypeId()));
+                        existingCustomer.setCustomerType(type);
+                    }
                     return customerRepository.save(existingCustomer);
                 })
                 .orElseThrow(() -> new RuntimeException("Cliente não encontrado com id " + id));
@@ -62,6 +61,7 @@ public class CustomerService {
         return customerRepository.findByFullNameContainingIgnoreCase(name);
     }
 
-
-
+    public Page<Customer> findAllPaginated(int page, int size) {
+        return customerRepository.findAll(org.springframework.data.domain.PageRequest.of(page, size));
+    }
 }

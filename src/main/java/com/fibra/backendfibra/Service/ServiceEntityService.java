@@ -105,5 +105,16 @@ public class ServiceEntityService {
         entity.setDuration(updated.getDuration());
         return repository.save(entity);
     }
+    public ServiceEntity updateServiceProfessionals(Integer serviceId, List<Long> userIds) {
+        ServiceEntity serviceEntity = repository.findById(serviceId)
+                .orElseThrow(() -> new RuntimeException("Serviço não encontrado com o ID: " + serviceId));
+        // Remove todos os vínculos antigos
+        userServiceRepository.deleteAll(userServiceRepository.findByServiceId(Long.valueOf(serviceId)));
+        // Cria novos vínculos
+        for (Long userId : userIds) {
+            userServiceService.createUserService(userId, Long.valueOf(serviceId));
+        }
+        return serviceEntity;
+    }
 
 }

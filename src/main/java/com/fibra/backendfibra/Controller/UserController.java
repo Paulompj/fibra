@@ -171,4 +171,18 @@ public class UserController {
         response.put("totalElements", resultPage.getTotalElements());
         return ResponseEntity.ok(response);
     }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<User> updateUser(@PathVariable Integer id, @RequestBody User user) {
+        return userService.findById(id)
+                .map(existingUser -> {
+                    existingUser.setFullName(user.getFullName());
+                    existingUser.setEmail(user.getEmail());
+                    existingUser.setRole(user.getRole());
+                    // Não atualiza a senha!
+                    User updated = userService.save(existingUser);
+                    return ResponseEntity.ok(updated);
+                })
+                .orElse(ResponseEntity.notFound().build());
+    }
 }
