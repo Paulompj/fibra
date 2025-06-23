@@ -46,20 +46,12 @@ public class Expedient {
         this.weekday = weekday;
     }
 
-    public OffsetDateTime getStartTime() {
-        return startTime;
+    public String getStartTime() {
+        return startTime != null ? startTime.toLocalTime().toString() : null;
     }
 
-    public void setStartTime(OffsetDateTime startTime) {
-        this.startTime = startTime;
-    }
-
-    public OffsetDateTime getEndTime() {
-        return endTime;
-    }
-
-    public void setEndTime(OffsetDateTime endTime) {
-        this.endTime = endTime;
+    public String getEndTime() {
+        return endTime != null ? endTime.toLocalTime().toString() : null;
     }
 
     public UserService getUserService() {
@@ -68,5 +60,13 @@ public class Expedient {
 
     public void setUserService(UserService userService) {
         this.userService = userService;
+    }
+
+    public void setStartTime(OffsetDateTime startTime) {
+        this.startTime = startTime;
+    }
+
+    public void setEndTime(OffsetDateTime endTime) {
+        this.endTime = endTime;
     }
 }

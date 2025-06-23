@@ -2,7 +2,7 @@ package com.fibra.backendfibra.DTO;
 
 public class LoginRequest {
     private String email;
-    private String senha;
+    private String password;
 
     public LoginRequest() {}
 
@@ -14,12 +14,11 @@ public class LoginRequest {
         this.email = email;
     }
 
-    public String getSenha() {
-        return senha;
+    public String getPassword() {
+        return password;
     }
 
-    public void setSenha(String senha) {
-        this.senha = senha;
+    public void setPassword(String password) {
+        this.password = password;
     }
 }
-
