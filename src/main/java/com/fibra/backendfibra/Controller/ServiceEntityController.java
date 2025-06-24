@@ -106,7 +106,7 @@ public class ServiceEntityController {
     }
     @PutMapping("/{id}")
     public ResponseEntity<ServiceEntity> updateServiceEntity(@PathVariable Integer id, @RequestBody ServiceWithUsersRequest request) {
-        ServiceEntity updated = service.updateServiceProfessionals(id, request.getUserIds());
+        ServiceEntity updated = service.updateServiceProfessionals(id, request);
         return ResponseEntity.ok(updated);
     }
 

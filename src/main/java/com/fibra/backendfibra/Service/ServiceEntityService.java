@@ -105,16 +105,22 @@ public class ServiceEntityService {
         entity.setDuration(updated.getDuration());
         return repository.save(entity);
     }
-    public ServiceEntity updateServiceProfessionals(Integer serviceId, List<Long> userIds) {
+    public ServiceEntity updateServiceProfessionals(Integer serviceId, ServiceWithUsersRequest request) {
         ServiceEntity serviceEntity = repository.findById(serviceId)
                 .orElseThrow(() -> new RuntimeException("Serviço não encontrado com o ID: " + serviceId));
+        // Atualiza dados do serviço
+        if (request.getName() != null) serviceEntity.setName(request.getName());
+        if (request.getDescription() != null) serviceEntity.setDescription(request.getDescription());
+        if (request.getDuration() != null) serviceEntity.setDuration(request.getDuration());
         // Remove todos os vínculos antigos
         userServiceRepository.deleteAll(userServiceRepository.findByServiceId(Long.valueOf(serviceId)));
         // Cria novos vínculos
-        for (Long userId : userIds) {
-            userServiceService.createUserService(userId, Long.valueOf(serviceId));
+        if (request.getUserIds() != null) {
+            for (Long userId : request.getUserIds()) {
+                userServiceService.createUserService(userId, Long.valueOf(serviceId));
+            }
         }
-        return serviceEntity;
+        return repository.save(serviceEntity);
     }
 
 }

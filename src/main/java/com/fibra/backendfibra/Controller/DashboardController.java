@@ -17,7 +17,7 @@ import java.time.temporal.TemporalAdjusters;
 import java.util.*;
 
 @RestController
-@RequestMapping("/api/dashboard")
+@RequestMapping("/dashboard")
 public class DashboardController {
     @Autowired
     private AppointmentRepository appointmentRepository;

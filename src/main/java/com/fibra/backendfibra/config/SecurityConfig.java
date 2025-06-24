@@ -32,13 +32,17 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/auth/login").permitAll()
-                        .requestMatchers("/appointments/*").permitAll()
-                        .requestMatchers("/user-services/schedule").permitAll()
-                        .requestMatchers("/customer-types").permitAll()
-                        .requestMatchers("/services").permitAll()
-                        .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
-                        .requestMatchers("/api/dashboard/**").permitAll()
+                        .requestMatchers(
+                                "/auth/login",
+                                "/customers",
+                                "/appointments",
+                                "/appointments/*",
+                                "/user-services/schedule",
+                                "/customer-types",
+                                "/services",
+                                "/swagger-ui/**",
+                                "/v3/api-docs/**"
+                        ).permitAll()
                         .anyRequest().authenticated()
                 )
                 .authenticationProvider(authenticationProvider())
