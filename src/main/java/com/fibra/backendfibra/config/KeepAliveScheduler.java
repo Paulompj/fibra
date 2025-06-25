@@ -20,8 +20,9 @@ public class KeepAliveScheduler {
     @Scheduled(fixedRate = 300000) // 5 minutos em milissegundos
     public void keepAlive() {
         try {
-            // Exemplo: rota aberta /services
-            ResponseEntity<String> response = restTemplate.getForEntity("https://fibra.onrender.com/services", String.class);
+            // Adicionando parâmetros de paginação obrigatórios
+            String urlComPaginacao = "https://fibra.onrender.com/services?page=1&size=10";
+            ResponseEntity<String> response = restTemplate.getForEntity(urlComPaginacao, String.class);
         } catch (Exception e) {
             // Loga a exceção, mas não interrompe o agendamento
             System.err.println("[KeepAliveScheduler] Falha ao fazer requisição keep-alive: " + e.getMessage());
